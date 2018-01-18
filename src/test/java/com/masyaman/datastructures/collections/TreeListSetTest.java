@@ -10,17 +10,18 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-public class IndexableSetTest {
+public class TreeListSetTest {
 
     private Random random;
     private Set<Long> elementsSet;
     private List<Long> elementsList;
+    private List<Long> removedList;
 
-    private IndexableSet indexableSet;
+    private List<Long> treeListSet;
 
     private int iterations;
 
-    public IndexableSetTest(int iterations) {
+    public TreeListSetTest(int iterations) {
         this.iterations = iterations;
     }
 
@@ -29,7 +30,8 @@ public class IndexableSetTest {
         random = new Random(9999);
         elementsSet = new HashSet<>();
         elementsList = new ArrayList<>();
-        indexableSet = new IndexableSet();
+        removedList = new ArrayList<>();
+        treeListSet = new TreeListSet<>();
     }
 
     @Parameterized.Parameters(name = "{0} {1}")
@@ -50,7 +52,7 @@ public class IndexableSetTest {
     @Test
     public void addToTail() throws Exception {
         for (int i = 0; i < iterations; i++) {
-            indexableSet.add(addRandom());
+            treeListSet.add(addRandom());
             assertReference();
         }
     }
@@ -58,7 +60,7 @@ public class IndexableSetTest {
     @Test
     public void addToHead() throws Exception {
         for (int i = 0; i < iterations; i++) {
-            indexableSet.add(0, addRandom(0));
+            treeListSet.add(0, addRandom(0));
             assertReference();
         }
     }
@@ -67,7 +69,7 @@ public class IndexableSetTest {
     public void addToMiddle() throws Exception {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
-            indexableSet.add(index, addRandom(index));
+            treeListSet.add(index, addRandom(index));
             assertReference();
         }
     }
@@ -75,9 +77,9 @@ public class IndexableSetTest {
     @Test
     public void removeByIndex() throws Exception {
         init();
-        while (!indexableSet.isEmpty()) {
+        while (!treeListSet.isEmpty()) {
             int index = removeRandomIndex();
-            indexableSet.remove(index);
+            treeListSet.remove(index);
             assertReference();
         }
     }
@@ -85,9 +87,11 @@ public class IndexableSetTest {
     @Test
     public void removeByValue() throws Exception {
         init();
-        while (!indexableSet.isEmpty()) {
+        while (!treeListSet.isEmpty()) {
             Long value = removeRandomValue();
-            indexableSet.remove(value);
+            assertThat(treeListSet.contains(value)).isTrue();
+            treeListSet.remove(value);
+            assertThat(treeListSet.contains(value)).isFalse();
             assertReference();
         }
     }
@@ -96,8 +100,8 @@ public class IndexableSetTest {
     public void contains() throws Exception {
         init();
         for (int i = 0; i < iterations; i++) {
-            assertThat(indexableSet.contains(getRandomExisting())).isTrue();
-            assertThat(indexableSet.contains(getRandomNotExisting())).isFalse();
+            assertThat(treeListSet.contains(getRandomExisting())).isTrue();
+            assertThat(treeListSet.contains(getRandomNotExisting())).isFalse();
         }
         assertReference();
     }
@@ -108,7 +112,7 @@ public class IndexableSetTest {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(indexableSet.get(index)).isEqualTo(value);
+            assertThat(treeListSet.get(index)).isEqualTo(value);
         }
         assertReference();
     }
@@ -119,7 +123,18 @@ public class IndexableSetTest {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(indexableSet.indexOf(value)).isEqualTo(index);
+            assertThat(treeListSet.indexOf(value)).isEqualTo(index);
+        }
+        assertReference();
+    }
+
+    @Test
+    public void lastIndexOf() throws Exception {
+        init();
+        for (int i = 0; i < iterations; i++) {
+            int index = random.nextInt(elementsList.size());
+            Long value = elementsList.get(index);
+            assertThat(treeListSet.lastIndexOf(value)).isEqualTo(index);
         }
         assertReference();
     }
@@ -127,8 +142,8 @@ public class IndexableSetTest {
     @Test
     public void addExisting() throws Exception {
         for (int i = 0; i < iterations; i++) {
-            indexableSet.add(addRandom());
-            indexableSet.add(getRandomExisting());
+            treeListSet.add(addRandom());
+            treeListSet.add(getRandomExisting());
             assertReference();
         }
     }
@@ -136,23 +151,23 @@ public class IndexableSetTest {
     @Test
     public void addContainsIndexOfRemove() throws Exception {
         init();
-        while (!indexableSet.isEmpty()) {
+        while (!treeListSet.isEmpty()) {
             // add
             int index = random.nextInt(elementsList.size() + 1);
-            indexableSet.add(index, addRandom(index));
+            treeListSet.add(index, addRandom(index));
 
             // contains
-            assertThat(indexableSet.contains(getRandomExisting())).isTrue();
-            assertThat(indexableSet.contains(getRandomNotExisting())).isFalse();
+            assertThat(treeListSet.contains(getRandomExisting())).isTrue();
+            assertThat(treeListSet.contains(getRandomNotExisting())).isFalse();
 
             // indexOf
             index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(indexableSet.indexOf(value)).isEqualTo(index);
+            assertThat(treeListSet.indexOf(value)).isEqualTo(index);
 
             // remove
-            indexableSet.remove(removeRandomValue());
-            indexableSet.remove(removeRandomIndex());
+            treeListSet.remove(removeRandomValue());
+            treeListSet.remove(removeRandomIndex());
 
             assertReference();
         }
@@ -161,7 +176,7 @@ public class IndexableSetTest {
     private void init() {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
-            indexableSet.add(index, addRandom(index)); // can be optimized
+            treeListSet.add(index, addRandom(index)); // can be optimized
         }
         assertReference();
     }
@@ -202,6 +217,13 @@ public class IndexableSetTest {
         }
     }
 
+    private Long getRandomRemoved() {
+        if (removedList.isEmpty()) {
+            return null;
+        }
+        return removedList.get(random.nextInt(removedList.size()));
+    }
+
     private Long removeRandomValue() {
         if (elementsList.isEmpty()) {
             return null;
@@ -210,6 +232,7 @@ public class IndexableSetTest {
         Long value = elementsList.get(index);
         elementsSet.remove(value);
         elementsList.remove(index);
+        removedList.add(value);
         return value;
     }
 
@@ -221,11 +244,16 @@ public class IndexableSetTest {
         Long value = elementsList.get(index);
         elementsSet.remove(value);
         elementsList.remove(index);
+        removedList.add(value);
         return index;
     }
 
     private void assertReference() {
-        assertThat(elementsSet).isEqualTo(indexableSet);
-        assertThat(elementsList).isEqualTo(indexableSet);
+        if (treeListSet instanceof Set) {
+            assertThat(elementsSet).isEqualTo(treeListSet);
+        } else {
+            assertThat(elementsSet).isEqualTo(new HashSet<>(treeListSet));
+        }
+        assertThat(elementsList).isEqualTo(treeListSet);
     }
 }

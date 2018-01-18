@@ -10,17 +10,19 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-public class IndexableSetPerformanceTest {
+public class SetPerformanceCompare {
 
     private Random random;
     private Set<Long> elementsSet;
     private List<Long> elementsList;
 
-    private IndexableSet indexableSet;
+    private List<Long> testList;
 
+    private Class clazz;
     private int iterations;
 
-    public IndexableSetPerformanceTest(int iterations) {
+    public SetPerformanceCompare(Class clazz, int iterations) {
+        this.clazz = clazz;
         this.iterations = iterations;
     }
 
@@ -29,26 +31,29 @@ public class IndexableSetPerformanceTest {
         random = new Random(9999);
         elementsSet = new HashSet<>();
         elementsList = new ArrayList<>();
-        indexableSet = new IndexableSet();
+        testList = (List<Long>) clazz.newInstance();
     }
 
     @Parameterized.Parameters(name = "{0} {1}")
     public static Collection parameters() {
         return Arrays.asList(new Object[][] {
-                {10},
-                {100},
-                {1000},
-                {10000},
-//                {100000},
-//                {1000000},
-//                {10000000},
+//                {TreeListSet.class, 10000},
+//                {TreeList.class, 10000},
+
+                {TreeListSet.class, 10},
+                {TreeListSet.class, 100},
+                {TreeListSet.class, 1000},
+                {TreeListSet.class, 10000},
+                {TreeListSet.class, 100000},
+//                {TreeListSet.class, 1000000},
+//                {TreeListSet.class, 10000000},
         });
     }
 
     @Test
     public void addToTail() throws Exception {
         for (int i = 0; i < iterations; i++) {
-            indexableSet.add(addRandom());
+            testList.add(addRandom());
             assertReference();
         }
     }
@@ -56,7 +61,7 @@ public class IndexableSetPerformanceTest {
     @Test
     public void addToHead() throws Exception {
         for (int i = 0; i < iterations; i++) {
-            indexableSet.add(0, addRandom(0));
+            testList.add(0, addRandom(0));
             assertReference();
         }
     }
@@ -65,7 +70,17 @@ public class IndexableSetPerformanceTest {
     public void addToMiddle() throws Exception {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
-            indexableSet.add(index, addRandom(index));
+            testList.add(index, addRandom(index));
+            assertReference();
+        }
+    }
+
+    @Test
+    public void addToTreeSetFake() throws Exception {
+        TreeSet<Long> tree = new TreeSet<>();
+        for (int i = 0; i < iterations; i++) {
+            int index = random.nextInt(elementsList.size() + 1);
+            tree.add(addRandom(index));
             assertReference();
         }
     }
@@ -73,9 +88,9 @@ public class IndexableSetPerformanceTest {
     @Test
     public void removeByIndex() throws Exception {
         init();
-        while (!indexableSet.isEmpty()) {
+        while (!testList.isEmpty()) {
             int index = removeRandomIndex();
-            indexableSet.remove(index);
+            testList.remove(index);
             assertReference();
         }
     }
@@ -83,9 +98,9 @@ public class IndexableSetPerformanceTest {
     @Test
     public void removeByValue() throws Exception {
         init();
-        while (!indexableSet.isEmpty()) {
+        while (!testList.isEmpty()) {
             Long value = removeRandomValue();
-            indexableSet.remove(value);
+            testList.remove(value);
             assertReference();
         }
     }
@@ -94,8 +109,8 @@ public class IndexableSetPerformanceTest {
     public void contains() throws Exception {
         init();
         for (int i = 0; i < iterations; i++) {
-            assertThat(indexableSet.contains(getRandomExisting())).isTrue();
-            assertThat(indexableSet.contains(getRandomNotExisting())).isFalse();
+            assertThat(testList.contains(getRandomExisting())).isTrue();
+            assertThat(testList.contains(getRandomNotExisting())).isFalse();
         }
         assertReference();
     }
@@ -106,7 +121,7 @@ public class IndexableSetPerformanceTest {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(indexableSet.get(index)).isNotNull();
+            assertThat(testList.get(index)).isNotNull();
         }
         assertReference();
     }
@@ -117,7 +132,18 @@ public class IndexableSetPerformanceTest {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(indexableSet.indexOf(value)).isNotNull();
+            assertThat(testList.indexOf(value)).isNotNull();
+        }
+        assertReference();
+    }
+
+    @Test
+    public void lastIndexOf() throws Exception {
+        init();
+        for (int i = 0; i < iterations; i++) {
+            int index = random.nextInt(elementsList.size());
+            Long value = elementsList.get(index);
+            assertThat(testList.lastIndexOf(value)).isNotNull();
         }
         assertReference();
     }
@@ -125,8 +151,8 @@ public class IndexableSetPerformanceTest {
     @Test
     public void addExisting() throws Exception {
         for (int i = 0; i < iterations; i++) {
-            indexableSet.add(addRandom());
-            indexableSet.add(getRandomExisting());
+            testList.add(addRandom());
+            testList.add(getRandomExisting());
             assertReference();
         }
     }
@@ -137,19 +163,19 @@ public class IndexableSetPerformanceTest {
         for (int i = 0; i < iterations; i++) {
             // add
             int index = random.nextInt(elementsList.size() + 1);
-            indexableSet.add(index, addRandom(index));
+            testList.add(index, addRandom(index));
 
             // remove
-            indexableSet.remove(removeRandomValue());
+            testList.remove(removeRandomValue());
 
             // contains
-            assertThat(indexableSet.contains(getRandomExisting())).isTrue();
-            assertThat(indexableSet.contains(getRandomNotExisting())).isFalse();
+            assertThat(testList.contains(getRandomExisting())).isTrue();
+            assertThat(testList.contains(getRandomNotExisting())).isFalse();
 
             // indexOf
             index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(indexableSet.indexOf(value)).isNotNull();
+            assertThat(testList.indexOf(value)).isNotNull();
         }
         assertReference();
     }
@@ -158,7 +184,7 @@ public class IndexableSetPerformanceTest {
 //        long start = System.currentTimeMillis();
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
-            indexableSet.add(index, addRandom(index)); // can be optimized
+            testList.add(index, addRandom(index)); // can be optimized
         }
         assertReference();
 //        System.out.println("Init time: " + (System.currentTimeMillis() - start));
@@ -201,7 +227,8 @@ public class IndexableSetPerformanceTest {
         int index = random.nextInt(elementsList.size());
         Long value = elementsList.get(index);
         elementsSet.remove(value);
-        elementsList.remove(index);
+        elementsList.set(index, elementsList.get(elementsList.size() - 1));
+        elementsList.remove(elementsList.size() - 1);
         return value;
     }
 
@@ -212,12 +239,13 @@ public class IndexableSetPerformanceTest {
         int index = random.nextInt(elementsList.size());
         Long value = elementsList.get(index);
         elementsSet.remove(value);
-        elementsList.remove(index);
+        elementsList.set(index, elementsList.get(elementsList.size() - 1));
+        elementsList.remove(elementsList.size() - 1);
         return index;
     }
 
     private void assertReference() {
-//        assertThat(elementsSet).isEqualTo(indexableSet);
-//        assertThat(elementsList).isEqualTo(indexableSet);
+//        assertThat(elementsSet).isEqualTo(testList);
+//        assertThat(elementsList).isEqualTo(testList);
     }
 }
