@@ -19,15 +19,17 @@ public class TreeListSetTest {
 
     private List<Long> treeListSet;
 
+    private int seed;
     private int iterations;
 
-    public TreeListSetTest(int iterations) {
+    public TreeListSetTest(int seed, int iterations) {
+        this.seed = seed;
         this.iterations = iterations;
     }
 
     @Before
     public void setUp() throws Exception {
-        random = new Random(9999);
+        random = new Random(seed);
         elementsSet = new HashSet<>();
         elementsList = new ArrayList<>();
         removedList = new ArrayList<>();
@@ -37,17 +39,27 @@ public class TreeListSetTest {
     @Parameterized.Parameters(name = "{0} {1}")
     public static Collection parameters() {
         return Arrays.asList(new Object[][] {
-                {1},
-                {2},
-                {3},
-                {4},
-                {5},
-                {10},
-                {100},
-                {1000},
-//                {10000},
+                {9999, 1},
+                {9999, 2},
+                {9999, 3},
+                {9999, 4},
+                {9999, 5},
+                {9999, 10},
+                {9999, 100},
+                {9999, 1000},
+//                {9999, 10000},
         });
     }
+
+//    @Parameterized.Parameters(name = "{0} {1}")
+//    public static Collection parameters() {
+//        ArrayList params = new ArrayList();
+//        Random r = new Random();
+//        for (int i = 0; i < 1000; i++) {
+//            params.add(new Object[] {r.nextInt(), r.nextInt(1 << (r.nextInt(12)))});
+//        }
+//        return params;
+//    }
 
     @Test
     public void addToTail() throws Exception {
