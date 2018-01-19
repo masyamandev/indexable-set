@@ -14,18 +14,21 @@ Feature | ArrayList | LinkedList | TreeSet | HashSet | (apache) TreeList | TreeL
 --- | --- | --- | --- | --- | --- | ---
 Sequence (List) | + | + | - | - | + | +
 Unique elements (Set) | - | - | + | + | - | +
-Add (sequentional / random) | O(1) / O(n) | O(1) / O(n) | O(log n) / NA | O(1) / NA | O(log n) / O(log n) | O(log n) / O(log n)
-Remove (sequentional / random) | O(1) / O(n) | O(1) / O(n) | O(log n) / NA | O(1) / NA | O(log n) / O(log n) | O(log n) / O(log n)
+Add sequentional | O(1) | O(1) | O(log n) | O(1) | O(log n) | O(log n)
+Add to specified position | O(n) | O(n) | NA | NA | O(log n) | O(log n)
+Remove sequentional | O(1) | O(1) | O(log n) | O(1) | O(log n) | O(log n)
+Remove from specified position | O(n) | O(n) | NA | NA | O(log n) | O(log n)
 Contains | O(n) | O(n) | O(log n) | O(1) | O(n) | O(1) or O(log n)
 Index of | O(n) | O(n) | O(log n) | O(1) | O(n) | O(log n)
 
 # Internal structure description
 
 Internally it’s represented by binary tree. It’s very similar to TreeList data structure 
-but nodes have links to parent. Each node has links lo left node, right node, parent node,
-sequence element and relative position to parent node. Root node has absolute position. 
-Additionally nodes may have other fields which can be required for balancing by algorithms 
-like AVL tree or red-black tree. For simplicity we can omit these fields:
+from apache commons, but nodes have links to parent. Each node has links lo left node, 
+right node, parent node, sequence element and relative position to parent node. Root node 
+has absolute position. Additionally nodes may have other fields which can be required for 
+balancing by algorithms like AVL tree or red-black tree. For simplicity we can omit 
+these fields. Current implementation is based on AVL tree.
 ```
 class Node {
     Node left
@@ -70,9 +73,10 @@ insertion/removing complexity of O(log n).
 ## Getting index of an element.
 To support getting an index of an element some kind of additional map is required. Elements 
 should be mapped to it’s nodes. Updating this map is handled along with updating tree.
+Default map implementation is HashMap.
 
 To get an index of element we need to get it’s node using map. Index of an element in 
-a sequence is a sum of relative positions from corresponding node to root none.
+a sequence is a sum of relative positions from corresponding node to root node.
 
 For example we’re looking for position of element ‘t’. Using map we get node 
 `[el: t, pos: -1]`. Set position counter to 0. Then:
