@@ -33,8 +33,16 @@ import java.util.*;
  * are all O(log n). Contains is O(1).
  *
  * Internally it uses HashMap and AVL tree.
+ * HashMap can be replaced to TreeMap, this will slightly reduce overall performance
+ * but will eliminate problems with hash collisions and hash table resizing.
  *
  * Code is based on apache common collections <code>TreeList</code>.
+ * Comparing to <code>TreeList</code> this data structure:
+ * <ul>
+ * <li>Contains unique elements</li>
+ * <li>Has almost the same or slightly slower insertion/removing operations, O(log n)</li>
+ * <li>Has greatly improved contains and indexOf operations, O(log n) while TreeList has O(n)</li>
+ * </ul>
  */
 public class TreeListSet<E> extends AbstractList<E> implements Set<E> {
 
