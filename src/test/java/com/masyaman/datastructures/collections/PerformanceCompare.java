@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
-public class SetPerformanceCompare {
+public class PerformanceCompare {
 
     private Random random;
     private Set<Long> elementsSet;
@@ -25,7 +25,7 @@ public class SetPerformanceCompare {
 
     private long maxTimestamp;
 
-    public SetPerformanceCompare(Class clazz, int iterations) {
+    public PerformanceCompare(Class clazz, int iterations) {
         this.clazz = clazz;
         this.iterations = iterations;
     }
