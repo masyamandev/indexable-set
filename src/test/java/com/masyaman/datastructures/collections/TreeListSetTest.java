@@ -109,6 +109,25 @@ public class TreeListSetTest {
     }
 
     @Test
+    public void iteratorTest() throws Exception {
+        init();
+        Iterator<Long> arrayListIterator = elementsList.iterator();
+        Iterator<Long> treeListSetIterator = treeListSet.iterator();
+        assertReference();
+        while (arrayListIterator.hasNext()) {
+            Long element = arrayListIterator.next();
+            assertThat(treeListSetIterator.next()).isEqualTo(element);
+            if (random.nextBoolean()) {
+                arrayListIterator.remove();
+                treeListSetIterator.remove();
+                removedList.add(element);
+            }
+        }
+        elementsSet.removeAll(removedList);
+        assertReference();
+    }
+
+    @Test
     public void contains() throws Exception {
         init();
         for (int i = 0; i < iterations; i++) {
@@ -261,6 +280,7 @@ public class TreeListSetTest {
     }
 
     private void assertReference() {
+        assertThat(treeListSet).hasSameSizeAs(elementsList);
         if (treeListSet instanceof Set) {
             assertThat(elementsSet).isEqualTo(treeListSet);
         } else {
