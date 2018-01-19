@@ -51,9 +51,6 @@ public class TreeListSet<E> extends AbstractList<E> implements Set<E> {
     /** The root node in the AVL tree */
     private AVLNode root;
 
-    /** The current size of the list */
-    private int size;
-
     //-----------------------------------------------------------------------
     /**
      * Constructs a new empty list.
@@ -95,7 +92,7 @@ public class TreeListSet<E> extends AbstractList<E> implements Set<E> {
      */
     @Override
     public int size() {
-        return size;
+        return nodeMap.size();
     }
 
     /**
@@ -215,7 +212,6 @@ public class TreeListSet<E> extends AbstractList<E> implements Set<E> {
         } else {
             setRoot(root.insert(index, obj));
         }
-        size++;
     }
 
     /**
@@ -247,7 +243,6 @@ public class TreeListSet<E> extends AbstractList<E> implements Set<E> {
         checkInterval(index, 0, size() - 1);
         final E result = get(index);
         setRoot(root.remove(index));
-        size--;
         return result;
     }
 
@@ -276,7 +271,6 @@ public class TreeListSet<E> extends AbstractList<E> implements Set<E> {
         modCount++;
         root = null;
         nodeMap.clear();
-        size = 0;
     }
 
     @Override
