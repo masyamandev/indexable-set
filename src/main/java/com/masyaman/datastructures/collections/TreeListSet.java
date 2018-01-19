@@ -46,7 +46,7 @@ import java.util.*;
  */
 public class TreeListSet<E> extends AbstractList<E> implements Set<E> {
 
-    private Map<E, AVLNode> nodeMap = new HashMap<>();
+    private final Map<E, AVLNode> nodeMap;
 
     /** The root node in the AVL tree */
     private AVLNode root;
@@ -56,17 +56,38 @@ public class TreeListSet<E> extends AbstractList<E> implements Set<E> {
      * Constructs a new empty list.
      */
     public TreeListSet() {
-        super();
+        this(new HashMap<>());
     }
 
     /**
-     * Constructs a new empty list that copies the specified collection.
+     * Constructs a new empty list.
+     * @param map Map implementation. It defines how elements would be compared. For example HashMap (by hashcode/equals),
+     *            TreeMap (by compareTo or Comparator), IdentityHashMap (by identity). Specified map should be empty.
+     */
+    public TreeListSet(final Map<E, AVLNode> map) {
+        this.nodeMap = map;
+    }
+
+    /**
+     * Constructs a new list that copies the specified collection.
      *
-     * @param coll  the collection to copy
+     * @param coll The collection to copy
      * @throws NullPointerException if the collection is null
      */
     public TreeListSet(final Collection<? extends E> coll) {
-        super();
+        this(coll, new HashMap<>());
+    }
+
+    /**
+     * Constructs a new list that copies the specified collection.
+     *
+     * @param coll The collection to copy
+     * @param map Map implementation. It defines how elements would be compared. For example HashMap (by hashcode/equals),
+     *            TreeMap (by compareTo or Comparator), IdentityHashMap (by identity). Specified map should be empty.
+     * @throws NullPointerException if the collection is null
+     */
+    public TreeListSet(final Collection<? extends E> coll, final Map<E, AVLNode> map) {
+        nodeMap = map;
         for (E e : coll) {
             add(e);
         }
