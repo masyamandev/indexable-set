@@ -1,5 +1,6 @@
 package com.masyaman.datastructures.collections;
 
+import org.apache.commons.collections4.list.TreeList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +9,7 @@ import org.junit.runners.Parameterized;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
 public class SetPerformanceCompare {
@@ -21,6 +23,8 @@ public class SetPerformanceCompare {
     private Class clazz;
     private int iterations;
 
+    private long maxTimestamp;
+
     public SetPerformanceCompare(Class clazz, int iterations) {
         this.clazz = clazz;
         this.iterations = iterations;
@@ -32,6 +36,7 @@ public class SetPerformanceCompare {
         elementsSet = new HashSet<>();
         elementsList = new ArrayList<>();
         testList = (List<Long>) clazz.newInstance();
+        maxTimestamp = System.currentTimeMillis() + 10000;
     }
 
     @Parameterized.Parameters(name = "{0} {1}")
@@ -47,6 +52,22 @@ public class SetPerformanceCompare {
                 {TreeListSet.class, 100000},
 //                {TreeListSet.class, 1000000},
 //                {TreeListSet.class, 10000000},
+
+//                {TreeList.class, 10},
+//                {TreeList.class, 100},
+//                {TreeList.class, 1000},
+//                {TreeList.class, 10000},
+//                {TreeList.class, 100000},
+////                {TreeList.class, 1000000},
+////                {TreeList.class, 10000000},
+//
+//                {ArrayList.class, 10},
+//                {ArrayList.class, 100},
+//                {ArrayList.class, 1000},
+//                {ArrayList.class, 10000},
+//                {ArrayList.class, 100000},
+////                {ArrayList.class, 1000000},
+////                {ArrayList.class, 10000000},
         });
     }
 
@@ -54,7 +75,7 @@ public class SetPerformanceCompare {
     public void addToTail() throws Exception {
         for (int i = 0; i < iterations; i++) {
             testList.add(addRandom());
-            assertReference();
+            checkTime();
         }
     }
 
@@ -62,7 +83,7 @@ public class SetPerformanceCompare {
     public void addToHead() throws Exception {
         for (int i = 0; i < iterations; i++) {
             testList.add(0, addRandom(0));
-            assertReference();
+            checkTime();
         }
     }
 
@@ -71,7 +92,7 @@ public class SetPerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
             testList.add(index, addRandom(index));
-            assertReference();
+            checkTime();
         }
     }
 
@@ -81,7 +102,7 @@ public class SetPerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
             tree.add(addRandom(index));
-            assertReference();
+            checkTime();
         }
     }
 
@@ -91,7 +112,7 @@ public class SetPerformanceCompare {
         while (!testList.isEmpty()) {
             int index = removeRandomIndex();
             testList.remove(index);
-            assertReference();
+            checkTime();
         }
     }
 
@@ -101,7 +122,7 @@ public class SetPerformanceCompare {
         while (!testList.isEmpty()) {
             Long value = removeRandomValue();
             testList.remove(value);
-            assertReference();
+            checkTime();
         }
     }
 
@@ -111,8 +132,8 @@ public class SetPerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             assertThat(testList.contains(getRandomExisting())).isTrue();
             assertThat(testList.contains(getRandomNotExisting())).isFalse();
+            checkTime();
         }
-        assertReference();
     }
 
     @Test
@@ -122,8 +143,8 @@ public class SetPerformanceCompare {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
             assertThat(testList.get(index)).isNotNull();
+            checkTime();
         }
-        assertReference();
     }
 
     @Test
@@ -133,8 +154,8 @@ public class SetPerformanceCompare {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
             assertThat(testList.indexOf(value)).isNotNull();
+            checkTime();
         }
-        assertReference();
     }
 
     @Test
@@ -144,8 +165,8 @@ public class SetPerformanceCompare {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
             assertThat(testList.lastIndexOf(value)).isNotNull();
+            checkTime();
         }
-        assertReference();
     }
 
     @Test
@@ -153,7 +174,7 @@ public class SetPerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             testList.add(addRandom());
             testList.add(getRandomExisting());
-            assertReference();
+            checkTime();
         }
     }
 
@@ -176,8 +197,9 @@ public class SetPerformanceCompare {
             index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
             assertThat(testList.indexOf(value)).isNotNull();
+
+            checkTime();
         }
-        assertReference();
     }
 
     private void init() {
@@ -186,7 +208,7 @@ public class SetPerformanceCompare {
             int index = random.nextInt(elementsList.size() + 1);
             testList.add(index, addRandom(index)); // can be optimized
         }
-        assertReference();
+        checkTime();
 //        System.out.println("Init time: " + (System.currentTimeMillis() - start));
     }
 
@@ -244,8 +266,9 @@ public class SetPerformanceCompare {
         return index;
     }
 
-    private void assertReference() {
-//        assertThat(elementsSet).isEqualTo(testList);
-//        assertThat(elementsList).isEqualTo(testList);
+    private void checkTime() {
+        if (System.currentTimeMillis() > maxTimestamp) {
+            fail("Too long execution");
+        }
     }
 }
