@@ -8,6 +8,9 @@ position in sequence with complexity O(log n).
 
 TreeListSet implements both List and Set.
 
+IndexedTreeSet is the similar structure, but it does not have restriction for unique objects.
+This structure is slightly slower than TreeListSet.
+
 # Comparing with other data structures
 
 Feature | ArrayList | LinkedList | TreeSet | HashSet | (apache) TreeList | TreeListSet | IndexedTreeListSet

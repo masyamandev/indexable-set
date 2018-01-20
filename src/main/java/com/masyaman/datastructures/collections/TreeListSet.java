@@ -41,6 +41,7 @@ import java.util.*;
  * <ul>
  * <li>Contains unique elements</li>
  * <li>Has almost the same or slightly slower insertion/removing operations, O(log n)</li>
+ * <li>Requires more memory, however it's still O(n).</li>
  * <li>Has greatly improved contains and indexOf operations, O(log n) while TreeList has O(n)</li>
  * </ul>
  *

@@ -43,10 +43,12 @@ import java.util.function.Function;
  * <ul>
  * <li>Has slightly slower insertion/removing operations, O(log n) in most cases, O((log n) ^ 2) in
  * worst cases (if TreeMap is used).</li>
+ * <li>Requires more memory, however it's still O(n).</li>
  * <li>Has greatly improved contains and indexOf operations, O(log n) while TreeList has O(n)</li>
  * </ul>
  *
- * As this implementation is slightly slower, it's recommended to use <code>TreeListSet</code> in
+ * As this implementation is slightly slower, anr require more memory it's recommended to use
+ * <code>TreeList</code> in cases when no searching is required or <code>TreeListSet</code> in
  * cases where unique elements should be stored.
  *
  * @author Aleksandr Maksymenko
