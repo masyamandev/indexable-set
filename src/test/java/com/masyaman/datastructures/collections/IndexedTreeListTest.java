@@ -18,7 +18,7 @@ public class IndexedTreeListTest {
     private List<Long> elementsList;
     private List<Long> removedList;
 
-    private List<Long> testList;
+    private IndexedTreeList<Long> testList;
 
     private int seed;
     private int iterations;
@@ -284,7 +284,7 @@ public class IndexedTreeListTest {
         }
         int index = random.nextInt(elementsList.size());
         Long value = elementsList.get(index);
-//        elementsSet.remove(value);
+        elementsSet.remove(value);
         elementsList.remove(index);
         removedList.add(value);
         return value;
@@ -296,7 +296,7 @@ public class IndexedTreeListTest {
         }
         int index = random.nextInt(elementsList.size());
         Long value = elementsList.get(index);
-//        elementsSet.remove(value);
+        elementsSet.remove(value);
         elementsList.remove(index);
         removedList.add(value);
         return index;
@@ -305,5 +305,6 @@ public class IndexedTreeListTest {
     private void assertReference() {
         assertThat(testList).hasSameSizeAs(elementsList);
         assertThat(testList).isEqualTo(elementsList);
+        assertThat(testList.uniqueValues()).isEqualTo(elementsSet);
     }
 }

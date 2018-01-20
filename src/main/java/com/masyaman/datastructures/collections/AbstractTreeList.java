@@ -509,7 +509,6 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
             final int indexRelativeToMe = index - relativePosition;
 
             if (indexRelativeToMe == 0) {
-                nodeMap.remove(value);
                 return removeSelf();
             }
             if (indexRelativeToMe > 0) {

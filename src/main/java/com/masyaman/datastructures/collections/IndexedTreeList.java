@@ -158,6 +158,13 @@ public class IndexedTreeList<E> extends AbstractTreeList<E, TreeSet<AbstractTree
     }
 
     /**
+     * Get unordered Set o unique values.
+     */
+    public Set<E> uniqueValues() {
+        return nodeMap.keySet();
+    }
+
+    /**
      * Check if set does not contains an object.
      */
     @Override
@@ -183,6 +190,7 @@ public class IndexedTreeList<E> extends AbstractTreeList<E, TreeSet<AbstractTree
         if (nodes == null) {
             return;
         }
+        // TODO replace key if necessary to save some memory
         nodes.remove(node);
         if (nodes.isEmpty()) {
             nodeMap.remove(node.getValue());
