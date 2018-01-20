@@ -10,17 +10,17 @@ TreeListSet implements both List and Set.
 
 # Comparing with other data structures
 
-Feature | ArrayList | LinkedList | TreeSet | HashSet | (apache) TreeList | TreeListSet
---- | --- | --- | --- | --- | --- | ---
-Sequence (List) | + | + | - | - | + | +
-Unique elements (Set) | - | - | + | + | - | +
-Add to tail | O(1) | O(1) | O(log n) | O(1) | O(log n) | O(log n)
-Add to specified position | O(n) | O(n) | N/A | N/A | O(log n) | O(log n)
-Remove from last position | O(1) | O(1) | N/A | N/A | O(log n) | O(log n)
-Remove from specified position | O(n) | O(n) | N/A | N/A | O(log n) | O(log n)
-Remove by value | O(n) | O(n) | O(log n) | O(1) | O(n) | O(log n)
-Contains | O(n) | O(n) | O(log n) | O(1) | O(n) | O(1) or O(log n)
-Index of | O(n) | O(n) | O(log n) | O(1) | O(n) | O(log n)
+Feature | ArrayList | LinkedList | TreeSet | HashSet | (apache) TreeList | TreeListSet | IndexedTreeListSet
+--- | --- | --- | --- | --- | --- | --- | ---
+Sequence (List) | + | + | - | - | + | + | +
+Unique elements (Set) | - | - | + | + | - | + | -
+Add to tail | O(1) | O(1) | O(log n) | O(1) | O(log n) | O(log n) | O(log n) / O((log n) ^ 2)
+Add to specified position | O(n) | O(n) | N/A | N/A | O(log n) | O(log n) | O(log n) / O((log n) ^ 2)
+Remove from last position | O(1) | O(1) | N/A | N/A | O(log n) | O(log n) | O(log n) / O((log n) ^ 2)
+Remove from specified position | O(n) | O(n) | N/A | N/A | O(log n) | O(log n) | O(log n) / O((log n) ^ 2)
+Remove by value | O(n) | O(n) | O(log n) | O(1) | O(n) | O(log n) | O(log n) / O((log n) ^ 2)
+Contains | O(n) | O(n) | O(log n) | O(1) | O(n) | O(1) or O(log n) | O(1) or O(log n)
+Index of | O(n) | O(n) | O(log n) | O(1) | O(n) | O(log n) | O(log n)
 
 # Internal structure description
 
