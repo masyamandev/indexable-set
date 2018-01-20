@@ -182,6 +182,26 @@ public class IndexedTreeListTest {
     }
 
     @Test
+    public void indexes() throws Exception {
+        init();
+        int initialSize = elementsList.size();
+        for (int i = 0; i < initialSize; i++) {
+            elementsList.add(elementsList.get(i));
+            testList.add(elementsList.get(i));
+        }
+        for (int i = 0; i < initialSize; i++) {
+            elementsList.add(elementsList.get(i));
+            testList.add(i, elementsList.get(i));
+        }
+        for (int i = 0; i < iterations; i++) {
+            int index = random.nextInt(initialSize);
+            Long value = elementsList.get(index);
+            assertThat(testList.indexes(value)).containsExactly(index, index + initialSize, index + initialSize * 2);
+        }
+        assertReference();
+    }
+
+    @Test
     public void addRandomExisting() throws Exception {
         for (int i = 0; i < iterations; i++) {
             testList.add(addRandom());

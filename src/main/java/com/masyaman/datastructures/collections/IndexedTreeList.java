@@ -142,6 +142,25 @@ public class IndexedTreeList<E> extends AbstractTreeList<E, TreeSet<AbstractTree
         return nodes.last().getPosition();
     }
 
+    /**
+     * Searches for the last index of an object in the list.
+     *
+     * @param object  the object to search
+     * @return the index of the object, -1 if not found
+     */
+    public int[] indexes(final Object object) {
+        TreeSet<AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode> nodes = nodeMap.get(object);
+        if (nodes == null || nodes.isEmpty()) {
+            return new int[0];
+        }
+        int[] indexes = new int[nodes.size()];
+        int i = 0;
+        for (AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode node : nodes) {
+            indexes[i++] = node.getPosition();
+        }
+        return indexes;
+    }
+
     @Override
     public void add(int index, E obj) {
         super.add(index, obj);
