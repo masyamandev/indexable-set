@@ -277,6 +277,18 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
         }
     }
 
+    /**
+     * Used for tests.
+     */
+    void assertConsistent() {
+        if (root == null) {
+            assert(size() == 0);
+        } else {
+            assert(size() == root.countNodes());
+        }
+    }
+
+
     //-----------------------------------------------------------------------
     /**
      * Implements an AVLNode which keeps the offset updated.
@@ -757,6 +769,22 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
             if (right != null) {
                 right.parent = this;
             }
+        }
+
+        /**
+         * Used for tests.
+         */
+        private int countNodes() {
+            int c = 1;
+            if (left != null) {
+                assert(left.parent == this);
+                c += left.countNodes();
+            }
+            if (right != null) {
+                assert(right.parent == this);
+                c += right.countNodes();
+            }
+            return c;
         }
 
         /**

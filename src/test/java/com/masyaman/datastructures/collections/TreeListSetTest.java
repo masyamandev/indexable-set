@@ -18,7 +18,7 @@ public class TreeListSetTest {
     private List<Long> elementsList;
     private List<Long> removedList;
 
-    private List<Long> testListSet;
+    private TreeListSet<Long> testListSet;
 
     private int seed;
     private int iterations;
@@ -288,5 +288,6 @@ public class TreeListSetTest {
             assertThat(elementsSet).isEqualTo(new HashSet<>(testListSet));
         }
         assertThat(elementsList).isEqualTo(testListSet);
+        testListSet.assertConsistent();
     }
 }

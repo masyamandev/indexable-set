@@ -306,5 +306,6 @@ public class IndexedTreeListTest {
         assertThat(testList).hasSameSizeAs(elementsList);
         assertThat(testList).isEqualTo(elementsList);
         assertThat(testList.uniqueValues()).isEqualTo(elementsSet);
+        testList.assertConsistent();
     }
 }
