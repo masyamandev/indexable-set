@@ -1,5 +1,6 @@
 package com.masyaman.datastructures.collections;
 
+import org.apache.commons.collections4.list.TreeList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +18,7 @@ public class TreeListSetTest {
     private List<Long> elementsList;
     private List<Long> removedList;
 
-    private List<Long> treeListSet;
+    private List<Long> testListSet;
 
     private int seed;
     private int iterations;
@@ -31,9 +32,9 @@ public class TreeListSetTest {
     public void setUp() throws Exception {
         random = new Random(seed);
         elementsSet = new HashSet<>();
-        elementsList = new ArrayList<>();
+        elementsList = new TreeList<>();
         removedList = new ArrayList<>();
-        treeListSet = new TreeListSet<>();
+        testListSet = new TreeListSet<>();
     }
 
     @Parameterized.Parameters(name = "{0} {1}")
@@ -64,7 +65,7 @@ public class TreeListSetTest {
     @Test
     public void addToTail() throws Exception {
         for (int i = 0; i < iterations; i++) {
-            treeListSet.add(addRandom());
+            testListSet.add(addRandom());
             assertReference();
         }
     }
@@ -72,7 +73,7 @@ public class TreeListSetTest {
     @Test
     public void addToHead() throws Exception {
         for (int i = 0; i < iterations; i++) {
-            treeListSet.add(0, addRandom(0));
+            testListSet.add(0, addRandom(0));
             assertReference();
         }
     }
@@ -81,7 +82,7 @@ public class TreeListSetTest {
     public void addToMiddle() throws Exception {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
-            treeListSet.add(index, addRandom(index));
+            testListSet.add(index, addRandom(index));
             assertReference();
         }
     }
@@ -89,9 +90,9 @@ public class TreeListSetTest {
     @Test
     public void removeByIndex() throws Exception {
         init();
-        while (!treeListSet.isEmpty()) {
+        while (!testListSet.isEmpty()) {
             int index = removeRandomIndex();
-            treeListSet.remove(index);
+            testListSet.remove(index);
             assertReference();
         }
     }
@@ -99,11 +100,11 @@ public class TreeListSetTest {
     @Test
     public void removeByValue() throws Exception {
         init();
-        while (!treeListSet.isEmpty()) {
+        while (!testListSet.isEmpty()) {
             Long value = removeRandomValue();
-            assertThat(treeListSet.contains(value)).isTrue();
-            treeListSet.remove(value);
-            assertThat(treeListSet.contains(value)).isFalse();
+            assertThat(testListSet.contains(value)).isTrue();
+            testListSet.remove(value);
+            assertThat(testListSet.contains(value)).isFalse();
             assertReference();
         }
     }
@@ -112,7 +113,7 @@ public class TreeListSetTest {
     public void iteratorTest() throws Exception {
         init();
         Iterator<Long> arrayListIterator = elementsList.iterator();
-        Iterator<Long> treeListSetIterator = treeListSet.iterator();
+        Iterator<Long> treeListSetIterator = testListSet.iterator();
         assertReference();
         while (arrayListIterator.hasNext()) {
             Long element = arrayListIterator.next();
@@ -131,8 +132,8 @@ public class TreeListSetTest {
     public void contains() throws Exception {
         init();
         for (int i = 0; i < iterations; i++) {
-            assertThat(treeListSet.contains(getRandomExisting())).isTrue();
-            assertThat(treeListSet.contains(getRandomNotExisting())).isFalse();
+            assertThat(testListSet.contains(getRandomExisting())).isTrue();
+            assertThat(testListSet.contains(getRandomNotExisting())).isFalse();
         }
         assertReference();
     }
@@ -143,7 +144,7 @@ public class TreeListSetTest {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(treeListSet.get(index)).isEqualTo(value);
+            assertThat(testListSet.get(index)).isEqualTo(value);
         }
         assertReference();
     }
@@ -154,7 +155,7 @@ public class TreeListSetTest {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(treeListSet.indexOf(value)).isEqualTo(index);
+            assertThat(testListSet.indexOf(value)).isEqualTo(index);
         }
         assertReference();
     }
@@ -165,7 +166,7 @@ public class TreeListSetTest {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(treeListSet.lastIndexOf(value)).isEqualTo(index);
+            assertThat(testListSet.lastIndexOf(value)).isEqualTo(index);
         }
         assertReference();
     }
@@ -173,8 +174,8 @@ public class TreeListSetTest {
     @Test
     public void addExisting() throws Exception {
         for (int i = 0; i < iterations; i++) {
-            treeListSet.add(addRandom());
-            treeListSet.add(getRandomExisting());
+            testListSet.add(addRandom());
+            testListSet.add(getRandomExisting());
             assertReference();
         }
     }
@@ -182,23 +183,23 @@ public class TreeListSetTest {
     @Test
     public void addContainsIndexOfRemove() throws Exception {
         init();
-        while (!treeListSet.isEmpty()) {
+        while (!testListSet.isEmpty()) {
             // add
             int index = random.nextInt(elementsList.size() + 1);
-            treeListSet.add(index, addRandom(index));
+            testListSet.add(index, addRandom(index));
 
             // contains
-            assertThat(treeListSet.contains(getRandomExisting())).isTrue();
-            assertThat(treeListSet.contains(getRandomNotExisting())).isFalse();
+            assertThat(testListSet.contains(getRandomExisting())).isTrue();
+            assertThat(testListSet.contains(getRandomNotExisting())).isFalse();
 
             // indexOf
             index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(treeListSet.indexOf(value)).isEqualTo(index);
+            assertThat(testListSet.indexOf(value)).isEqualTo(index);
 
             // remove
-            treeListSet.remove(removeRandomValue());
-            treeListSet.remove(removeRandomIndex());
+            testListSet.remove(removeRandomValue());
+            testListSet.remove(removeRandomIndex());
 
             assertReference();
         }
@@ -207,7 +208,7 @@ public class TreeListSetTest {
     private void init() {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
-            treeListSet.add(index, addRandom(index)); // can be optimized
+            testListSet.add(index, addRandom(index)); // can be optimized
         }
         assertReference();
     }
@@ -280,12 +281,12 @@ public class TreeListSetTest {
     }
 
     private void assertReference() {
-        assertThat(treeListSet).hasSameSizeAs(elementsList);
-        if (treeListSet instanceof Set) {
-            assertThat(elementsSet).isEqualTo(treeListSet);
+        assertThat(testListSet).hasSameSizeAs(elementsList);
+        if (testListSet instanceof Set) {
+            assertThat(elementsSet).isEqualTo(testListSet);
         } else {
-            assertThat(elementsSet).isEqualTo(new HashSet<>(treeListSet));
+            assertThat(elementsSet).isEqualTo(new HashSet<>(testListSet));
         }
-        assertThat(elementsList).isEqualTo(treeListSet);
+        assertThat(elementsList).isEqualTo(testListSet);
     }
 }

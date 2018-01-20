@@ -9,85 +9,64 @@ import org.junit.runners.Parameterized;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
-public class PerformanceCompare {
+public class IndexedTreeListTest {
 
     private Random random;
     private Set<Long> elementsSet;
     private List<Long> elementsList;
+    private List<Long> removedList;
 
     private List<Long> testList;
 
-    private Class clazz;
+    private int seed;
     private int iterations;
 
-    private long maxTimestamp;
-
-    public PerformanceCompare(Class clazz, int iterations) {
-        this.clazz = clazz;
+    public IndexedTreeListTest(int seed, int iterations) {
+        this.seed = seed;
         this.iterations = iterations;
     }
 
     @Before
     public void setUp() throws Exception {
-        random = new Random(9999);
+        random = new Random(seed);
         elementsSet = new HashSet<>();
-        elementsList = new ArrayList<>();
-        testList = (List<Long>) clazz.newInstance();
-        maxTimestamp = System.currentTimeMillis() + 10000;
+        elementsList = new TreeList<>();
+        removedList = new ArrayList<>();
+        testList = new IndexedTreeList<>();
     }
 
     @Parameterized.Parameters(name = "{0} {1}")
     public static Collection parameters() {
         return Arrays.asList(new Object[][] {
-//                {TreeListSet.class, 10000},
-//                {IndexedTreeList.class, 10000},
-//                {TreeList.class, 10000},
-//                {TreeListSet.class, 100000},
-//                {IndexedTreeList.class, 100000},
-//                {TreeList.class, 100000},
-
-                {TreeListSet.class, 10},
-                {TreeListSet.class, 100},
-                {TreeListSet.class, 1000},
-                {TreeListSet.class, 10000},
-                {TreeListSet.class, 100000},
-//                {TreeListSet.class, 1000000},
-//                {TreeListSet.class, 10000000},
-
-                {IndexedTreeList.class, 10},
-                {IndexedTreeList.class, 100},
-                {IndexedTreeList.class, 1000},
-                {IndexedTreeList.class, 10000},
-                {IndexedTreeList.class, 100000},
-//                {IndexedTreeList.class, 1000000},
-//                {IndexedTreeList.class, 10000000},
-
-//                {TreeList.class, 10},
-//                {TreeList.class, 100},
-//                {TreeList.class, 1000},
-//                {TreeList.class, 10000},
-//                {TreeList.class, 100000},
-////                {TreeList.class, 1000000},
-////                {TreeList.class, 10000000},
-//
-//                {ArrayList.class, 10},
-//                {ArrayList.class, 100},
-//                {ArrayList.class, 1000},
-//                {ArrayList.class, 10000},
-//                {ArrayList.class, 100000},
-////                {ArrayList.class, 1000000},
-////                {ArrayList.class, 10000000},
+                {9999, 1},
+                {9999, 2},
+                {9999, 3},
+                {9999, 4},
+                {9999, 5},
+                {9999, 10},
+                {9999, 100},
+                {9999, 1000},
+//                {9999, 10000},
         });
     }
+
+//    @Parameterized.Parameters(name = "{0} {1}")
+//    public static Collection parameters() {
+//        ArrayList params = new ArrayList();
+//        Random r = new Random();
+//        for (int i = 0; i < 1000; i++) {
+//            params.add(new Object[] {r.nextInt(), r.nextInt(1 << (r.nextInt(12)))});
+//        }
+//        return params;
+//    }
 
     @Test
     public void addToTail() throws Exception {
         for (int i = 0; i < iterations; i++) {
             testList.add(addRandom());
-            checkTime();
+            assertReference();
         }
     }
 
@@ -95,7 +74,7 @@ public class PerformanceCompare {
     public void addToHead() throws Exception {
         for (int i = 0; i < iterations; i++) {
             testList.add(0, addRandom(0));
-            checkTime();
+            assertReference();
         }
     }
 
@@ -104,17 +83,7 @@ public class PerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
             testList.add(index, addRandom(index));
-            checkTime();
-        }
-    }
-
-    @Test
-    public void addToTreeSetFake() throws Exception {
-        TreeSet<Long> tree = new TreeSet<>();
-        for (int i = 0; i < iterations; i++) {
-            int index = random.nextInt(elementsList.size() + 1);
-            tree.add(addRandom(index));
-            checkTime();
+            assertReference();
         }
     }
 
@@ -124,7 +93,7 @@ public class PerformanceCompare {
         while (!testList.isEmpty()) {
             int index = removeRandomIndex();
             testList.remove(index);
-            checkTime();
+            assertReference();
         }
     }
 
@@ -133,9 +102,30 @@ public class PerformanceCompare {
         init();
         while (!testList.isEmpty()) {
             Long value = removeRandomValue();
+            assertThat(testList.contains(value)).isTrue();
             testList.remove(value);
-            checkTime();
+            assertThat(testList.contains(value)).isFalse();
+            assertReference();
         }
+    }
+
+    @Test
+    public void iteratorTest() throws Exception {
+        init();
+        Iterator<Long> arrayListIterator = elementsList.iterator();
+        Iterator<Long> treeListSetIterator = testList.iterator();
+        assertReference();
+        while (arrayListIterator.hasNext()) {
+            Long element = arrayListIterator.next();
+            assertThat(treeListSetIterator.next()).isEqualTo(element);
+            if (random.nextBoolean()) {
+                arrayListIterator.remove();
+                treeListSetIterator.remove();
+                removedList.add(element);
+            }
+        }
+        elementsSet.removeAll(removedList);
+        assertReference();
     }
 
     @Test
@@ -144,8 +134,8 @@ public class PerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             assertThat(testList.contains(getRandomExisting())).isTrue();
             assertThat(testList.contains(getRandomNotExisting())).isFalse();
-            checkTime();
         }
+        assertReference();
     }
 
     @Test
@@ -154,39 +144,51 @@ public class PerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(testList.get(index)).isNotNull();
-            checkTime();
+            assertThat(testList.get(index)).isEqualTo(value);
         }
+        assertReference();
     }
 
     @Test
     public void indexOf() throws Exception {
         init();
-        for (int i = 0; i < iterations; i++) {
-            int index = random.nextInt(elementsList.size());
-            Long value = elementsList.get(index);
-            assertThat(testList.indexOf(value)).isNotNull();
-            checkTime();
+        int initialSize = elementsList.size();
+        for (int i = 0; i < initialSize; i++) {
+            elementsList.add(elementsList.get(i));
+            testList.add(elementsList.get(i));
         }
+        for (int i = 0; i < iterations; i++) {
+            int index = random.nextInt(initialSize);
+            Long value = elementsList.get(index);
+            assertThat(testList.indexOf(value)).isEqualTo(index);
+        }
+        assertReference();
     }
 
     @Test
     public void lastIndexOf() throws Exception {
         init();
-        for (int i = 0; i < iterations; i++) {
-            int index = random.nextInt(elementsList.size());
-            Long value = elementsList.get(index);
-            assertThat(testList.lastIndexOf(value)).isNotNull();
-            checkTime();
+        int initialSize = elementsList.size();
+        for (int i = 0; i < initialSize; i++) {
+            elementsList.add(elementsList.get(i));
+            testList.add(elementsList.get(i));
         }
+        for (int i = 0; i < iterations; i++) {
+            int index = random.nextInt(initialSize);
+            Long value = elementsList.get(index);
+            assertThat(testList.lastIndexOf(value)).isEqualTo(index + initialSize);
+        }
+        assertReference();
     }
 
     @Test
     public void addRandomExisting() throws Exception {
         for (int i = 0; i < iterations; i++) {
             testList.add(addRandom());
-            testList.add(getRandomExisting());
-            checkTime();
+            Long randomExisting = getRandomExisting();
+            testList.add(randomExisting);
+            elementsList.add(randomExisting);
+            assertReference();
         }
     }
 
@@ -195,20 +197,18 @@ public class PerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             testList.add(addRandom());
             testList.add(elementsList.get(0));
-            checkTime();
+            elementsList.add(elementsList.get(0));
+            assertReference();
         }
     }
 
     @Test
-    public void addRemoveContainsIndexOf() throws Exception {
+    public void addContainsIndexOfRemove() throws Exception {
         init();
-        for (int i = 0; i < iterations; i++) {
+        while (!testList.isEmpty()) {
             // add
             int index = random.nextInt(elementsList.size() + 1);
             testList.add(index, addRandom(index));
-
-            // remove
-            testList.remove(removeRandomValue());
 
             // contains
             assertThat(testList.contains(getRandomExisting())).isTrue();
@@ -217,20 +217,22 @@ public class PerformanceCompare {
             // indexOf
             index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
-            assertThat(testList.indexOf(value)).isNotNull();
+            assertThat(testList.indexOf(value)).isEqualTo(index);
 
-            checkTime();
+            // remove
+            testList.remove(removeRandomValue());
+            testList.remove(removeRandomIndex());
+
+            assertReference();
         }
     }
 
     private void init() {
-//        long start = System.currentTimeMillis();
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
             testList.add(index, addRandom(index)); // can be optimized
         }
-        checkTime();
-//        System.out.println("Init time: " + (System.currentTimeMillis() - start));
+        assertReference();
     }
 
     private Long addRandom() {
@@ -244,7 +246,13 @@ public class PerformanceCompare {
     }
 
     private Long addRandom(int index) {
-        return addRandom();
+        while (true) {
+            Long value = random.nextLong();
+            if (elementsSet.add(value)) {
+                elementsList.add(index, value);
+                return value;
+            }
+        }
     }
 
     private Long getRandomExisting() {
@@ -263,15 +271,22 @@ public class PerformanceCompare {
         }
     }
 
+    private Long getRandomRemoved() {
+        if (removedList.isEmpty()) {
+            return null;
+        }
+        return removedList.get(random.nextInt(removedList.size()));
+    }
+
     private Long removeRandomValue() {
         if (elementsList.isEmpty()) {
             return null;
         }
         int index = random.nextInt(elementsList.size());
         Long value = elementsList.get(index);
-        elementsSet.remove(value);
-        elementsList.set(index, elementsList.get(elementsList.size() - 1));
-        elementsList.remove(elementsList.size() - 1);
+//        elementsSet.remove(value);
+        elementsList.remove(index);
+        removedList.add(value);
         return value;
     }
 
@@ -281,15 +296,14 @@ public class PerformanceCompare {
         }
         int index = random.nextInt(elementsList.size());
         Long value = elementsList.get(index);
-        elementsSet.remove(value);
-        elementsList.set(index, elementsList.get(elementsList.size() - 1));
-        elementsList.remove(elementsList.size() - 1);
+//        elementsSet.remove(value);
+        elementsList.remove(index);
+        removedList.add(value);
         return index;
     }
 
-    private void checkTime() {
-        if (System.currentTimeMillis() > maxTimestamp) {
-            fail("Too long execution");
-        }
+    private void assertReference() {
+        assertThat(testList).hasSameSizeAs(elementsList);
+        assertThat(testList).isEqualTo(elementsList);
     }
 }

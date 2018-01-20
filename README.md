@@ -14,10 +14,11 @@ Feature | ArrayList | LinkedList | TreeSet | HashSet | (apache) TreeList | TreeL
 --- | --- | --- | --- | --- | --- | ---
 Sequence (List) | + | + | - | - | + | +
 Unique elements (Set) | - | - | + | + | - | +
-Add sequentional | O(1) | O(1) | O(log n) | O(1) | O(log n) | O(log n)
-Add to specified position | O(n) | O(n) | NA | NA | O(log n) | O(log n)
-Remove sequentional | O(1) | O(1) | O(log n) | O(1) | O(log n) | O(log n)
-Remove from specified position | O(n) | O(n) | NA | NA | O(log n) | O(log n)
+Add to tail | O(1) | O(1) | O(log n) | O(1) | O(log n) | O(log n)
+Add to specified position | O(n) | O(n) | N/A | N/A | O(log n) | O(log n)
+Remove from last position | O(1) | O(1) | N/A | N/A | O(log n) | O(log n)
+Remove from specified position | O(n) | O(n) | N/A | N/A | O(log n) | O(log n)
+Remove by value | O(n) | O(n) | O(log n) | O(1) | O(n) | O(log n)
 Contains | O(n) | O(n) | O(log n) | O(1) | O(n) | O(1) or O(log n)
 Index of | O(n) | O(n) | O(log n) | O(1) | O(n) | O(log n)
 
