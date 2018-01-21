@@ -60,12 +60,13 @@ import java.util.function.Function;
  *
  * @author Aleksandr Maksymenko
  */
-public class IndexedTreeList<E> extends AbstractTreeList<E, TreeSet<AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode>> implements Set<E> {
+public class IndexedTreeList<E> extends AbstractTreeList<E> implements Set<E> {
 
     private final Comparator<AVLNode> NODE_COMPARATOR = Comparator.comparingInt(AVLNode::getPosition);
-    private final Function<E, TreeSet<AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode>> NEW_NODE_TREE_SET = k -> new TreeSet(NODE_COMPARATOR);
+    private final Function<E, TreeSet<AVLNode>> NEW_NODE_TREE_SET = k -> new TreeSet(NODE_COMPARATOR);
 
-    private int size = 0;
+    /** Map from element to it's node or nodes */
+    protected final Map<E, TreeSet<AVLNode>> nodeMap;
 
     //-----------------------------------------------------------------------
     /**
@@ -81,7 +82,7 @@ public class IndexedTreeList<E> extends AbstractTreeList<E, TreeSet<AbstractTree
      *            TreeMap (by compareTo or Comparator), IdentityHashMap (by identity). Specified map should be empty.
      */
     public IndexedTreeList(final Map map) {
-        super(map);
+        this.nodeMap = map;
     }
 
     /**
@@ -103,23 +104,13 @@ public class IndexedTreeList<E> extends AbstractTreeList<E, TreeSet<AbstractTree
      * @throws NullPointerException if the collection is null
      */
     public IndexedTreeList(final Collection<? extends E> coll, final Map map) {
-        super(map);
+        this.nodeMap = map;
         for (E e : coll) {
             add(e);
         }
     }
 
     //-----------------------------------------------------------------------
-
-    /**
-     * Gets the current size of the list.
-     *
-     * @return the current size
-     */
-    @Override
-    public int size() {
-        return size;
-    }
 
     /**
      * Searches for the index of an object in the list.
@@ -129,7 +120,7 @@ public class IndexedTreeList<E> extends AbstractTreeList<E, TreeSet<AbstractTree
      */
     @Override
     public int indexOf(final Object object) {
-        TreeSet<AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode> nodes = nodeMap.get(object);
+        TreeSet<AVLNode> nodes = nodeMap.get(object);
         if (nodes == null || nodes.isEmpty()) {
             return -1;
         }
@@ -144,7 +135,7 @@ public class IndexedTreeList<E> extends AbstractTreeList<E, TreeSet<AbstractTree
      */
     @Override
     public int lastIndexOf(final Object object) {
-        TreeSet<AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode> nodes = nodeMap.get(object);
+        TreeSet<AVLNode> nodes = nodeMap.get(object);
         if (nodes == null || nodes.isEmpty()) {
             return -1;
         }
@@ -158,31 +149,36 @@ public class IndexedTreeList<E> extends AbstractTreeList<E, TreeSet<AbstractTree
      * @return the index of the object, -1 if not found
      */
     public int[] indexes(final Object object) {
-        TreeSet<AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode> nodes = nodeMap.get(object);
+        TreeSet<AVLNode> nodes = nodeMap.get(object);
         if (nodes == null || nodes.isEmpty()) {
             return new int[0];
         }
         int[] indexes = new int[nodes.size()];
         int i = 0;
-        for (AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode node : nodes) {
+        for (AVLNode node : nodes) {
             indexes[i++] = node.getPosition();
         }
         return indexes;
     }
 
+    /**
+     * Searches for the presence of an object in the list.
+     *
+     * @param object  the object to check
+     * @return true if the object is found
+     */
     @Override
-    public void add(int index, E obj) {
-        super.add(index, obj);
-        size++;
+    public boolean contains(final Object object) {
+        return nodeMap.containsKey(object);
     }
 
+    /**
+     * Clears the list, removing all entries.
+     */
     @Override
-    public E remove(int index) {
-        E obj = super.remove(index);
-        if (obj != null) {
-            size--;
-        }
-        return obj;
+    public void clear() {
+        super.clear();
+        nodeMap.clear();
     }
 
     /**
@@ -204,17 +200,16 @@ public class IndexedTreeList<E> extends AbstractTreeList<E, TreeSet<AbstractTree
      * Add node to nodeMap.
      */
     @Override
-    protected void addToNodeMap(AVLNode node) {
-        TreeSet<AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode> nodes = nodeMap.computeIfAbsent(node.getValue(), NEW_NODE_TREE_SET);
-        nodes.add((AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode) (Object) node); // TODO remove cast
+    protected void addNode(AVLNode node) {
+        nodeMap.computeIfAbsent(node.getValue(), NEW_NODE_TREE_SET).add(node);
     }
 
     /**
      * Remove node from nodeMap.
      */
     @Override
-    protected void removeFromNodeMap(AVLNode node) {
-        TreeSet<AbstractTreeList<E, AbstractTreeList.AVLNode>.AVLNode> nodes = nodeMap.get(node.getValue());
+    protected void removeNode(AVLNode node) {
+        TreeSet<AVLNode> nodes = nodeMap.get(node.getValue());
         if (nodes == null) {
             return;
         }

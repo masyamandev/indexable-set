@@ -23,19 +23,13 @@ import java.util.*;
  *
  * @author Aleksandr Maksymenko
  */
-abstract class AbstractTreeList<E, N> extends AbstractList<E> {
-
-    /** Map from element to it's node or nodes */
-    protected final Map<E, N> nodeMap;
+abstract class AbstractTreeList<E> extends AbstractList<E> {
 
     /** The root node in the AVL tree */
     protected AVLNode root;
 
-    //-----------------------------------------------------------------------
-
-    protected AbstractTreeList(Map<E, N> nodeMap) {
-        this.nodeMap = nodeMap;
-    }
+    /** Size of a List */
+    protected int size = 0;
 
     //-----------------------------------------------------------------------
     /**
@@ -56,7 +50,9 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
      * @return the current size
      */
     @Override
-    abstract public int size();
+    public int size() {
+        return size;
+    }
 
     /**
      * Gets an iterator over the list.
@@ -112,16 +108,6 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
     @Override
     abstract public int lastIndexOf(final Object object);
 
-    /**
-     * Searches for the presence of an object in the list.
-     *
-     * @param object  the object to check
-     * @return true if the object is found
-     */
-    @Override
-    public boolean contains(final Object object) {
-        return nodeMap.containsKey(object);
-    }
 
     /**
      * Converts the list into an array.
@@ -166,6 +152,7 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
         } else {
             setRoot(root.insert(index, obj));
         }
+        size++;
     }
 
     /**
@@ -197,6 +184,7 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
         checkInterval(index, 0, size() - 1);
         final E result = get(index);
         setRoot(root.remove(index));
+        size--;
         return result;
     }
 
@@ -224,7 +212,6 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
     public void clear() {
         modCount++;
         root = null;
-        nodeMap.clear();
     }
 
 
@@ -255,12 +242,12 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
     /**
      * Add node to nodeMap.
      */
-    abstract protected void addToNodeMap(AVLNode node);
+    abstract protected void addNode(AVLNode node);
 
     /**
      * Remove node from nodeMap.
      */
-    abstract protected void removeFromNodeMap(AVLNode node);
+    abstract protected void removeNode(AVLNode node);
 
     //-----------------------------------------------------------------------
     /**
@@ -355,10 +342,10 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
          */
         void setValue(final E obj) {
             if (this.value != null) {
-                removeFromNodeMap(this);
+                removeNode(this);
             }
             this.value = obj;
-            addToNodeMap(this);
+            addNode(this);
         }
 
         /**
@@ -568,7 +555,7 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
          * @return the node that replaces this one in the parent
          */
         private AVLNode removeSelf() {
-            removeFromNodeMap(this);
+            removeNode(this);
             if (getRightSubTree() == null && getLeftSubTree() == null) {
                 return null;
             }
@@ -845,7 +832,7 @@ abstract class AbstractTreeList<E, N> extends AbstractList<E> {
          * @param parent  the parent list
          * @param fromIndex  the index to start at
          */
-        protected TreeListIterator(final AbstractTreeList<E, N> parent, final int fromIndex) throws IndexOutOfBoundsException {
+        protected TreeListIterator(final AbstractTreeList<E> parent, final int fromIndex) throws IndexOutOfBoundsException {
             super();
             this.parent = parent;
             this.expectedModCount = parent.modCount;

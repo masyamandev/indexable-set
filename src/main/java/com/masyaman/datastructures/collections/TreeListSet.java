@@ -51,7 +51,10 @@ import java.util.*;
  *
  * @author Aleksandr Maksymenko
  */
-public class TreeListSet<E> extends AbstractTreeList<E, AbstractTreeList.AVLNode> implements Set<E> {
+public class TreeListSet<E> extends AbstractTreeList<E> implements Set<E> {
+
+    /** Map from element to it's node or nodes */
+    protected final Map<E, AVLNode> nodeMap;
 
     //-----------------------------------------------------------------------
     /**
@@ -67,7 +70,7 @@ public class TreeListSet<E> extends AbstractTreeList<E, AbstractTreeList.AVLNode
      *            TreeMap (by compareTo or Comparator), IdentityHashMap (by identity). Specified map should be empty.
      */
     public TreeListSet(final Map map) {
-        super(map);
+        this.nodeMap = map;
     }
 
     /**
@@ -89,23 +92,13 @@ public class TreeListSet<E> extends AbstractTreeList<E, AbstractTreeList.AVLNode
      * @throws NullPointerException if the collection is null
      */
     public TreeListSet(final Collection<? extends E> coll, final Map map) {
-        super(map);
+        this.nodeMap = map;
         for (E e : coll) {
             add(e);
         }
     }
 
     //-----------------------------------------------------------------------
-
-    /**
-     * Gets the current size of the list.
-     *
-     * @return the current size
-     */
-    @Override
-    public int size() {
-        return nodeMap.size();
-    }
 
     /**
      * Searches for the index of an object in the list.
@@ -134,6 +127,26 @@ public class TreeListSet<E> extends AbstractTreeList<E, AbstractTreeList.AVLNode
     }
 
     /**
+     * Searches for the presence of an object in the list.
+     *
+     * @param object  the object to check
+     * @return true if the object is found
+     */
+    @Override
+    public boolean contains(final Object object) {
+        return nodeMap.containsKey(object);
+    }
+
+    /**
+     * Clears the list, removing all entries.
+     */
+    @Override
+    public void clear() {
+        super.clear();
+        nodeMap.clear();
+    }
+
+    /**
      * Check if set does not contains an object.
      */
     @Override
@@ -145,7 +158,7 @@ public class TreeListSet<E> extends AbstractTreeList<E, AbstractTreeList.AVLNode
      * Add node to nodeMap.
      */
     @Override
-    protected void addToNodeMap(AVLNode node) {
+    protected void addNode(AVLNode node) {
         nodeMap.put(node.getValue(), node);
     }
 
@@ -153,7 +166,7 @@ public class TreeListSet<E> extends AbstractTreeList<E, AbstractTreeList.AVLNode
      * Remove node from nodeMap.
      */
     @Override
-    protected void removeFromNodeMap(AVLNode node) {
+    protected void removeNode(AVLNode node) {
         nodeMap.remove(node.getValue());
     }
 
