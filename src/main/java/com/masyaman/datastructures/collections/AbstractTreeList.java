@@ -21,6 +21,8 @@ import java.util.*;
 /**
  * Common class for indexable tree lists.
  *
+ * Code is based on apache common collections <code>TreeList</code>.
+ *
  * @author Aleksandr Maksymenko
  */
 abstract class AbstractTreeList<E> extends AbstractList<E> {
@@ -35,7 +37,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     /**
      * Gets the element at the specified index.
      *
-     * @param index  the index to retrieve
+     * @param index the index to retrieve
      * @return the element at the specified index
      */
     @Override
@@ -79,7 +81,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     /**
      * Gets a ListIterator over the list.
      *
-     * @param fromIndex  the index to start from
+     * @param fromIndex the index to start from
      * @return the new iterator
      */
     @Override
@@ -118,8 +120,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     /**
      * Adds a new element to the list.
      *
-     * @param index  the index to add before
-     * @param obj  the element to add
+     * @param index the index to add before
+     * @param obj the element to add
      */
     @Override
     public void add(final int index, final E obj) {
@@ -139,8 +141,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     /**
      * Sets the element at the specified index.
      *
-     * @param index  the index to set
-     * @param obj  the object to store at the specified index
+     * @param index the index to set
+     * @param obj the object to store at the specified index
      * @return the previous object at that index
      * @throws IndexOutOfBoundsException if the index is invalid
      */
@@ -156,7 +158,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     /**
      * Removes the element at the specified index.
      *
-     * @param index  the index to remove
+     * @param index the index to remove
      * @return the previous object at that index
      */
     @Override
@@ -234,9 +236,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     /**
      * Checks whether the index is valid.
      *
-     * @param index  the index to check
-     * @param startIndex  the first allowed index
-     * @param endIndex  the last allowed index
+     * @param index the index to check
+     * @param startIndex the first allowed index
+     * @param endIndex the last allowed index
      * @throws IndexOutOfBoundsException if the index is invalid
      */
     private void checkInterval(final int index, final int startIndex, final int endIndex) {
@@ -292,7 +294,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * Constructs a new node with a relative position.
          *
          * @param relativePosition  the relative position of the node
-         * @param obj  the value for the node
+         * @param obj the value for the node
          * @param rightFollower the node with the value following this one
          * @param leftFollower the node with the value leading this one
          */
@@ -319,7 +321,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         /**
          * Sets the value.
          *
-         * @param obj  the value to store
+         * @param obj the value to store
          */
         void setValue(final E obj) {
             if (this.value != null) {
@@ -692,8 +694,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         /**
          * Sets the left field to the node, or the previous node if that is null
          *
-         * @param node  the new left subtree node
-         * @param previous  the previous node in the linked list
+         * @param node the new left subtree node
+         * @param previous the previous node in the linked list
          */
         private void setLeft(final AVLNode node, final AVLNode previous) {
             leftIsPrevious = node == null;
@@ -704,7 +706,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         /**
          * Sets the left field to the node, or the previous node if that is null
          *
-         * @param node  the new left subtree node
+         * @param node the new left subtree node
          */
         private void setLeft(final AVLNode node) {
             left = node;
@@ -716,8 +718,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         /**
          * Sets the right field to the node, or the next node if that is null
          *
-         * @param node  the new left subtree node
-         * @param next  the next node in the linked list
+         * @param node the new left subtree node
+         * @param next the next node in the linked list
          */
         private void setRight(final AVLNode node, final AVLNode next) {
             rightIsNext = node == null;
@@ -728,7 +730,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         /**
          * Sets the right field to the node, or the next node if that is null
          *
-         * @param node  the new left subtree node
+         * @param node the new left subtree node
          */
         private void setRight(final AVLNode node) {
             right = node;
@@ -808,8 +810,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         /**
          * Create a ListIterator for a list.
          *
-         * @param parent  the parent list
-         * @param fromIndex  the index to start at
+         * @param parent the parent list
+         * @param fromIndex the index to start at
          */
         protected TreeListIterator(final AbstractTreeList<E> parent, final int fromIndex) throws IndexOutOfBoundsException {
             super();
