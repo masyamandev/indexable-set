@@ -861,7 +861,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             if (!hasPrevious()) {
                 throw new NoSuchElementException("Already at start of list.");
             }
-            if (next == null) {
+            if (next == null || next.previous() == null) {
                 next = parent.root.get(nextIndex - 1);
             } else {
                 next = next.previous();

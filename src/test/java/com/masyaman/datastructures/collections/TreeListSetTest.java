@@ -32,7 +32,7 @@ public class TreeListSetTest {
     public void setUp() throws Exception {
         random = new Random(seed);
         elementsSet = new HashSet<>();
-        elementsList = new TreeList<>();
+        elementsList = new ArrayList<>();
         removedList = new ArrayList<>();
         testListSet = new TreeListSet<>();
     }
@@ -57,7 +57,7 @@ public class TreeListSetTest {
 //        ArrayList params = new ArrayList();
 //        Random r = new Random();
 //        for (int i = 0; i < 1000; i++) {
-//            params.add(new Object[] {r.nextInt(), r.nextInt(1 << (r.nextInt(12)))});
+//            params.add(new Object[] {r.nextInt(), r.nextInt(1 << (r.nextInt(12))) + 1});
 //        }
 //        return params;
 //    }
@@ -107,25 +107,6 @@ public class TreeListSetTest {
             assertThat(testListSet.contains(value)).isFalse();
             assertReference();
         }
-    }
-
-    @Test
-    public void iteratorTest() throws Exception {
-        init();
-        Iterator<Long> arrayListIterator = elementsList.iterator();
-        Iterator<Long> treeListSetIterator = testListSet.iterator();
-        assertReference();
-        while (arrayListIterator.hasNext()) {
-            Long element = arrayListIterator.next();
-            assertThat(treeListSetIterator.next()).isEqualTo(element);
-            if (random.nextBoolean()) {
-                arrayListIterator.remove();
-                treeListSetIterator.remove();
-                removedList.add(element);
-            }
-        }
-        elementsSet.removeAll(removedList);
-        assertReference();
     }
 
     @Test
