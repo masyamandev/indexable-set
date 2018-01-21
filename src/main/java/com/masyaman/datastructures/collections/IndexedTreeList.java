@@ -28,16 +28,23 @@ import java.util.function.Function;
  * TreeListSet can be suitable for tasks which requires fast modification in the
  * middle of a list and provides fast contains and indexOf.
  * <p/>
- * Insertions (head, tail, middle), removals(by index or by value) are O(log n)
- * in most cases but can be O((log n) ^ 2) in cases when List contains small
- * amount of unique elements.
+ * Get by index is O(log n).
+ * Insert (head, tail, middle) and remove(by index or by value) are O(log n)
+ * in most cases but can be up to O((log n) ^ 2) in cases when List contains big
+ * amount of elements equals to each other. Actual complexity is
+ * O((log n) * (1 + log m)) where m is amount of elements equal to inserted/removed.
  * indexOf is O(log n).
  * Contains is O(1) or O(log n) depending on Map implementation.
- *
- * Internally it uses HashMap and AVL tree.
+ * <p/>
+ * Internally it uses Map (HashMap by default) and AVL tree.
  * HashMap can be replaced to TreeMap, this will slightly reduce overall performance
  * but will eliminate problems with hash collisions and hash table resizing.
- *
+ * Using TreeMap with custom Comparator will provide indexOf by custom criteria.
+ * Using IdentityHashMap will provide indexOf by object's identity.
+ * <p/>
+ * Objects equality is checked by Map, so objects should be immutable for Map
+ * consistency.
+ * <p/>
  * Code is based on apache common collections <code>TreeList</code>.
  * Comparing to <code>TreeList</code> this data structure:
  * <ul>
