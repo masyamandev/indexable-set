@@ -45,9 +45,11 @@ public class PerformanceCompare {
 //                {TreeListSet.class, 10000},
 //                {IndexedTreeList.class, 10000},
 //                {TreeList.class, 10000},
+//                {ArrayList.class, 10000},
 //                {TreeListSet.class, 100000},
 //                {IndexedTreeList.class, 100000},
 //                {TreeList.class, 100000},
+//                {ArrayList.class, 100000},
 
                 {TreeListSet.class, 10},
                 {TreeListSet.class, 100},
@@ -87,7 +89,7 @@ public class PerformanceCompare {
     public void addToTail() throws Exception {
         for (int i = 0; i < iterations; i++) {
             testList.add(addRandom());
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -95,7 +97,7 @@ public class PerformanceCompare {
     public void addToHead() throws Exception {
         for (int i = 0; i < iterations; i++) {
             testList.add(0, addRandom(0));
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -104,7 +106,7 @@ public class PerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
             testList.add(index, addRandom(index));
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -114,7 +116,7 @@ public class PerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
             tree.add(addRandom(index));
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -124,7 +126,7 @@ public class PerformanceCompare {
         while (!testList.isEmpty()) {
             int index = removeRandomIndex();
             testList.remove(index);
-            checkTime();
+            checkTime(iterations - testList.size());
         }
     }
 
@@ -134,7 +136,7 @@ public class PerformanceCompare {
         while (!testList.isEmpty()) {
             Long value = removeRandomValue();
             testList.remove(value);
-            checkTime();
+            checkTime(iterations - testList.size());
         }
     }
 
@@ -144,7 +146,7 @@ public class PerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             assertThat(testList.contains(getRandomExisting())).isTrue();
             assertThat(testList.contains(getRandomNotExisting())).isFalse();
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -155,7 +157,7 @@ public class PerformanceCompare {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
             assertThat(testList.get(index)).isNotNull();
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -166,7 +168,7 @@ public class PerformanceCompare {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
             assertThat(testList.indexOf(value)).isNotNull();
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -177,7 +179,7 @@ public class PerformanceCompare {
             int index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
             assertThat(testList.lastIndexOf(value)).isNotNull();
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -186,7 +188,7 @@ public class PerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             testList.add(addRandom());
             testList.add(getRandomExisting());
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -195,7 +197,7 @@ public class PerformanceCompare {
         for (int i = 0; i < iterations; i++) {
             testList.add(addRandom());
             testList.add(elementsList.get(0));
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -219,7 +221,7 @@ public class PerformanceCompare {
             Long value = elementsList.get(index);
             assertThat(testList.indexOf(value)).isNotNull();
 
-            checkTime();
+            checkTime(i);
         }
     }
 
@@ -229,7 +231,7 @@ public class PerformanceCompare {
             int index = random.nextInt(elementsList.size() + 1);
             testList.add(index, addRandom(index)); // can be optimized
         }
-        checkTime();
+        checkTime(0);
 //        System.out.println("Init time: " + (System.currentTimeMillis() - start));
     }
 
@@ -287,9 +289,9 @@ public class PerformanceCompare {
         return index;
     }
 
-    private void checkTime() {
+    private void checkTime(int i) {
         if (System.currentTimeMillis() > maxTimestamp) {
-            fail("Too long execution");
+            fail("Too long execution, done " + i + " iterations of total " + iterations);
         }
     }
 }
