@@ -143,10 +143,10 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> implements Set<E> {
     }
 
     /**
-     * Searches for the last index of an object in the list.
+     * Searches for all indexes of an objects in the list equals to specified object.
      *
-     * @param object  the object to search
-     * @return the index of the object, -1 if not found
+     * @param object the object to search
+     * @return array of indexes of the objects
      */
     public int[] indexes(final Object object) {
         TreeSet<AVLNode> nodes = nodeMap.get(object);
@@ -159,6 +159,20 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> implements Set<E> {
             indexes[i++] = node.getPosition();
         }
         return indexes;
+    }
+
+    /**
+     * Get amount of objects in the list equals to specified object.
+     *
+     * @param object the object to search
+     * @return amount of objects
+     */
+    public int count(final Object object) {
+        TreeSet<AVLNode> nodes = nodeMap.get(object);
+        if (nodes == null || nodes.isEmpty()) {
+            return 0;
+        }
+        return nodes.size();
     }
 
     /**
