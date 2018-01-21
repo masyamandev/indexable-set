@@ -91,25 +91,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     }
 
     /**
-     * Searches for the index of an object in the list.
-     *
-     * @param object  the object to search
-     * @return the index of the object, -1 if not found
-     */
-    @Override
-    abstract public int indexOf(final Object object);
-
-    /**
-     * Searches for the last index of an object in the list.
-     *
-     * @param object  the object to search
-     * @return the index of the object, -1 if not found
-     */
-    @Override
-    abstract public int lastIndexOf(final Object object);
-
-
-    /**
      * Converts the list into an array.
      *
      * @return the list as an array
@@ -440,7 +421,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 relativePosition++;
             }
             if (getLeftSubTree() == null) {
-//                setLeft(new AVLNode(-1, obj, this, this, left), null);
                 setLeft(new AVLNode(-1, obj, this, null, null), null);
             } else {
                 setLeft(left.insert(indexRelativeToMe, obj), null);
@@ -455,7 +435,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 relativePosition--;
             }
             if (getRightSubTree() == null) {
-//                setRight(new AVLNode(+1, obj, this, right, this), null);
                 setRight(new AVLNode(+1, obj, this, null, null), null);
             } else {
                 setRight(right.insert(indexRelativeToMe, obj), null);
@@ -798,7 +777,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     /**
      * A list iterator over the linked list.
      */
-    private class TreeListIterator implements ListIterator<E> {
+    private class TreeListIterator implements ListIterator<E> { // TODO implements ListIterator<E>, OrderedIterator<E>
         /** The parent list */
         private final AbstractTreeList parent;
         /**
