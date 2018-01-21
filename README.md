@@ -13,7 +13,7 @@ This structure is slightly slower than TreeListSet.
 
 # Comparing with other data structures
 
-Feature | ArrayList | LinkedList | TreeSet | HashSet | (apache) TreeList | TreeListSet | IndexedTreeListSet
+Feature | ArrayList | LinkedList | TreeSet | HashSet | (apache) TreeList | TreeListSet | IndexedTreeListSet*
 --- | --- | --- | --- | --- | --- | --- | ---
 Sequence (List) | + | + | - | - | + | + | +
 Unique elements (Set) | - | - | + | + | - | + | -
@@ -25,6 +25,7 @@ Remove from specified position | O(n) | O(n) | N/A | N/A | O(log n) | O(log n) |
 Remove by value | O(n) | O(n) | O(log n) | O(1) | O(n) | O(log n) | O((log n) * (1 + log m))
 Contains | O(n) | O(n) | O(log n) | O(1) | O(n) | O(1) or O(log n) | O(1) or O(log n)
 Index of | O(n) | O(n) | O(log n) | O(1) | O(n) | O(log n) | O(log n)
+\* m is amount of elements equals to inserted/removed element.
 
 # Internal structure description
 
