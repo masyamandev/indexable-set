@@ -195,6 +195,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     public void clear() {
         modCount++;
         root = null;
+        size = 0;
     }
 
 
