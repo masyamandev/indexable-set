@@ -424,7 +424,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 relativePosition++;
             }
             if (getLeftSubTree() == null) {
-                setLeft(new AVLNode(-1, obj, this, null, null), null);
+                setLeft(new AVLNode(-1, obj, this, this, left), null);
             } else {
                 setLeft(left.insert(indexRelativeToMe, obj), null);
             }
@@ -438,7 +438,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 relativePosition--;
             }
             if (getRightSubTree() == null) {
-                setRight(new AVLNode(+1, obj, this, null, null), null);
+                setRight(new AVLNode(+1, obj, this, right, this), null);
             } else {
                 setRight(right.insert(indexRelativeToMe, obj), null);
             }
@@ -576,8 +576,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 if (left == null) {
                     // special case where left that was deleted was a double link
                     // only occurs when height difference is equal
-                    setLeft(leftPrevious);
                     leftIsPrevious = true;
+                    setLeft(leftPrevious);
                 }
                 if (relativePosition > 0) {
                     relativePosition--;
@@ -666,7 +666,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             final int myNewPosition = -newTop.relativePosition;
             final int movedPosition = getOffset(newTop) + getOffset(movedNode);
 
-            setRight(movedNode, null);
+            setRight(movedNode, newTop);
             newTop.setLeft(this, null);
 
             setOffset(newTop, newTopPosition);
@@ -683,7 +683,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             final int myNewPosition = -newTop.relativePosition;
             final int movedPosition = getOffset(newTop) + getOffset(movedNode);
 
-            setLeft(movedNode, null);
+            setLeft(movedNode, newTop);
             newTop.setRight(this, null);
 
             setOffset(newTop, newTopPosition);
@@ -711,7 +711,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          */
         private void setLeft(final AVLNode node) {
             left = node;
-            if (left != null) {
+            if (left != null && !leftIsPrevious) {
                 left.parent = this;
             }
         }
@@ -735,7 +735,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          */
         private void setRight(final AVLNode node) {
             right = node;
-            if (right != null) {
+            if (right != null && !rightIsNext) {
                 right.parent = this;
             }
         }
@@ -745,11 +745,11 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          */
         private int countNodes() {
             int c = 1;
-            if (left != null) {
+            if (!leftIsPrevious && left != null) {
                 assert(left.parent == this);
                 c += left.countNodes();
             }
-            if (right != null) {
+            if (!rightIsNext && right != null) {
                 assert(right.parent == this);
                 c += right.countNodes();
             }

@@ -13,6 +13,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,10 +28,12 @@ public class PerformanceCompare {
     @State(Scope.Benchmark)
     public static class Plan {
 
+//        @Param({"1000000000"})
         @Param({"10", "1000000000"})
 //        @Param({"10", "1000", "1000000000"})
         public int maxValue;
 
+//        @Param({"1000000"})
         @Param({ "1000", "1000000"})
 //        @Param({"100", "1000", "10000", "100000", "1000000"})
         public int size;
@@ -45,6 +48,10 @@ public class PerformanceCompare {
         public void init() throws IllegalAccessException, InstantiationException {
             random = new Random();
             list = (List<Integer>) CLASSES.get(className).newInstance();
+
+            if (list instanceof Set && maxValue <= size) {
+                throw new IllegalArgumentException("Too small value is set for Set");
+            }
 
             for (int i = 0; i < size; i++) {
                 list.add(random.nextInt(maxValue));

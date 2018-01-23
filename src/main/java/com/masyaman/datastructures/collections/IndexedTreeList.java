@@ -60,7 +60,7 @@ import java.util.function.Function;
  *
  * @author Aleksandr Maksymenko
  */
-public class IndexedTreeList<E> extends AbstractTreeList<E> implements Set<E> {
+public class IndexedTreeList<E> extends AbstractTreeList<E> {
 
     private final Comparator<AVLNode> NODE_COMPARATOR = Comparator.comparingInt(AVLNode::getPosition);
     private final Function<E, TreeSet<AVLNode>> NEW_NODE_TREE_SET = k -> new TreeSet(NODE_COMPARATOR);
