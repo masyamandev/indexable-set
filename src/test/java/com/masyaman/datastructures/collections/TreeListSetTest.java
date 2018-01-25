@@ -185,6 +185,64 @@ public class TreeListSetTest {
         }
     }
 
+    @Test
+    public void newFromCollection() throws Exception {
+        for (int i = 0; i < iterations; i++) {
+            addRandom();
+        }
+        testListSet = new TreeListSet<>(elementsList);
+        while (!testListSet.isEmpty()) {
+            // add
+            int index = random.nextInt(elementsList.size() + 1);
+            testListSet.add(index, addRandom(index));
+
+            // contains
+            assertThat(testListSet.contains(getRandomExisting())).isTrue();
+            assertThat(testListSet.contains(getRandomNotExisting())).isFalse();
+
+            // indexOf
+            index = random.nextInt(elementsList.size());
+            Long value = elementsList.get(index);
+            assertThat(testListSet.indexOf(value)).isEqualTo(index);
+
+            // remove
+            testListSet.remove(removeRandomValue());
+            testListSet.remove(removeRandomIndex());
+
+            assertReference();
+        }
+    }
+
+    @Test
+    public void addAll() throws Exception {
+        init();
+        List<Long> toAdd = new ArrayList<>(elementsList.size());
+        for (int i = 0; i < iterations; i++) {
+            toAdd.add(addRandom());
+        }
+        testListSet.addAll(toAdd);
+        while (!testListSet.isEmpty()) {
+            // add
+            int index = random.nextInt(elementsList.size() + 1);
+            testListSet.add(index, addRandom(index));
+
+            // contains
+            assertThat(testListSet.contains(getRandomExisting())).isTrue();
+            assertThat(testListSet.contains(getRandomNotExisting())).isFalse();
+
+            // indexOf
+            index = random.nextInt(elementsList.size());
+            Long value = elementsList.get(index);
+            assertThat(testListSet.indexOf(value)).isEqualTo(index);
+
+            // remove
+            testListSet.remove(removeRandomValue());
+            testListSet.remove(removeRandomIndex());
+
+            assertReference();
+        }
+    }
+
     private void init() {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);

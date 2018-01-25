@@ -105,8 +105,9 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> {
      */
     public IndexedTreeList(final Collection<? extends E> coll, final Map map) {
         this.nodeMap = map;
-        for (E e : coll) {
-            add(e);
+        if (!coll.isEmpty()) {
+            root = new AVLNode(coll);
+            size = coll.size();
         }
     }
 
@@ -201,6 +202,30 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> {
     public Set<E> uniqueValues() {
         return nodeMap.keySet();
     }
+
+
+//    /**
+//     * Appends all of the elements in the specified collection to the end of this list,
+//     * in the order that they are returned by the specified collection's Iterator.
+//     * <p>
+//     * This method runs in O(n + log m) time, where m is
+//     * the size of this list and n is the size of {@code c}.
+//     *
+//     * @param c  the collection to be added to this list
+//     * @return {@code true} if this list changed as a result of the call
+//     * @throws NullPointerException {@inheritDoc}
+//     */
+//    @Override
+//    public boolean addAll(final Collection<? extends E> c) {
+//        if (c.isEmpty()) {
+//            return false;
+//        }
+//        modCount += c.size();
+//        final AVLNode cTree = new AVLNode(c);
+//        root = root == null ? cTree : root.addAll(cTree, size);
+//        size += c.size();
+//        return true;
+//    }
 
     /**
      * Check if set does not contains an object.

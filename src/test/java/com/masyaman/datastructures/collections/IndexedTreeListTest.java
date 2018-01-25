@@ -227,6 +227,65 @@ public class IndexedTreeListTest {
         }
     }
 
+    @Test
+    public void newFromCollection() throws Exception {
+        for (int i = 0; i < iterations; i++) {
+            addRandom();
+        }
+        testList = new IndexedTreeList<>(elementsList);
+        while (!testList.isEmpty()) {
+            // add
+            int index = random.nextInt(elementsList.size() + 1);
+            testList.add(index, addRandom(index));
+
+            // contains
+            assertThat(testList.contains(getRandomExisting())).isTrue();
+            assertThat(testList.contains(getRandomNotExisting())).isFalse();
+
+            // indexOf
+            index = random.nextInt(elementsList.size());
+            Long value = elementsList.get(index);
+            assertThat(testList.indexOf(value)).isEqualTo(index);
+
+            // remove
+            testList.remove(removeRandomValue());
+            testList.remove(removeRandomIndex());
+
+            assertReference();
+        }
+    }
+
+
+    @Test
+    public void addAll() throws Exception {
+        init();
+        List<Long> toAdd = new ArrayList<>(elementsList.size());
+        for (int i = 0; i < iterations; i++) {
+            toAdd.add(addRandom());
+        }
+        testList.addAll(toAdd);
+        while (!testList.isEmpty()) {
+            // add
+            int index = random.nextInt(elementsList.size() + 1);
+            testList.add(index, addRandom(index));
+
+            // contains
+            assertThat(testList.contains(getRandomExisting())).isTrue();
+            assertThat(testList.contains(getRandomNotExisting())).isFalse();
+
+            // indexOf
+            index = random.nextInt(elementsList.size());
+            Long value = elementsList.get(index);
+            assertThat(testList.indexOf(value)).isEqualTo(index);
+
+            // remove
+            testList.remove(removeRandomValue());
+            testList.remove(removeRandomIndex());
+
+            assertReference();
+        }
+    }
+
     private void init() {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
