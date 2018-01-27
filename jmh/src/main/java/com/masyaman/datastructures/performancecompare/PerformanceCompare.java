@@ -121,6 +121,43 @@ public class PerformanceCompare {
         }
     }
 
+    @Benchmark
+    public void constructor(Plan plan, Blackhole blackhole) throws ReflectiveOperationException {
+        List<Integer> list = plan.list;
+        Random random = plan.random;
+        List<Integer> values = new ArrayList<>(plan.size);
+        for (int i = 0; i < plan.size; i++) {
+            values.add(random.nextInt(plan.maxValue));
+        }
+        list = (List<Integer>) CLASSES.get(plan.className).getConstructor(Collection.class).newInstance(values);
+        blackhole.consume(list);
+    }
+
+    @Benchmark
+    public void addByOne(Plan plan, Blackhole blackhole) throws ReflectiveOperationException {
+        List<Integer> list = plan.list;
+        Random random = plan.random;
+        List<Integer> values = new ArrayList<>(plan.size);
+        for (int i = 0; i < plan.size; i++) {
+            values.add(random.nextInt(plan.maxValue));
+        }
+        for (Integer value : values) {
+            list.add(value);
+        }
+        blackhole.consume(list);
+    }
+
+    @Benchmark
+    public void addAll(Plan plan, Blackhole blackhole) throws ReflectiveOperationException {
+        List<Integer> list = plan.list;
+        Random random = plan.random;
+        List<Integer> values = new ArrayList<>(plan.size);
+        for (int i = 0; i < plan.size; i++) {
+            values.add(random.nextInt(plan.maxValue));
+        }
+        list.addAll(values);
+        blackhole.consume(list);
+    }
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
