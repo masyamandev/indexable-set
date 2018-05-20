@@ -207,6 +207,9 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> {
      */
     @Override
     protected boolean canAdd(E e) {
+        if (e == null) {
+            throw new NullPointerException("Null elements are not allowed");
+        }
         return true;
     }
 

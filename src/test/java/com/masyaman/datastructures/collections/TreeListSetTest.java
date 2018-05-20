@@ -8,6 +8,7 @@ import org.junit.runners.Parameterized;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @RunWith(Parameterized.class)
 public class TreeListSetTest {
@@ -180,6 +181,16 @@ public class TreeListSetTest {
             // remove
             testListSet.remove(removeRandomValue());
             testListSet.remove(removeRandomIndex());
+
+            // check add nulls
+            try {
+                testListSet.add(null);
+                fail("No exception on adding null");
+            } catch (NullPointerException e) {}
+            try {
+                testListSet.add(random.nextInt(elementsList.size() + 1), null);
+                fail("No exception on adding null");
+            } catch (NullPointerException e) {}
 
             assertReference();
         }

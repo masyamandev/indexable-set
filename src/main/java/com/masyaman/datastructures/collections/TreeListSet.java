@@ -151,6 +151,9 @@ public class TreeListSet<E> extends AbstractTreeList<E> implements Set<E> {
      */
     @Override
     protected boolean canAdd(E e) {
+        if (e == null) {
+            throw new NullPointerException("Null elements are not allowed");
+        }
         return !nodeMap.containsKey(e);
     }
 
