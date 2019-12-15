@@ -276,14 +276,14 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     class AVLNode {
         /** Parent node */
         private AVLNode parent;
-        /** The left child node or the predecessor if {@link #leftIsPrevious}.*/
+//        /** The left child node or the predecessor if {@link #leftIsPrevious}.*/
         private AVLNode left;
-        /** Flag indicating that left reference is not a subtree but the predecessor. */
-        private boolean leftIsPrevious;
-        /** The right child node or the successor if {@link #rightIsNext}. */
+//        /** Flag indicating that left reference is not a subtree but the predecessor. */
+//        private boolean leftIsPrevious;
+//        /** The right child node or the successor if {@link #rightIsNext}. */
         private AVLNode right;
-        /** Flag indicating that right reference is not a subtree but the successor. */
-        private boolean rightIsNext;
+//        /** Flag indicating that right reference is not a subtree but the successor. */
+//        private boolean rightIsNext;
         /** How many levels of left/right are below this one. */
         private int height;
         /** The relative position, root holds absolute position. */
@@ -302,11 +302,11 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         private AVLNode(final int relativePosition, final E obj,
                         final AVLNode parent, final AVLNode rightFollower, final AVLNode leftFollower) {
             this.relativePosition = relativePosition;
-            this.rightIsNext = true;
-            this.leftIsPrevious = true;
+//            this.rightIsNext = true;
+//            this.leftIsPrevious = true;
             this.parent = parent;
-            setRight(rightFollower);
-            setLeft(leftFollower);
+//            setRight(rightFollower);
+//            setLeft(leftFollower);
             setValue(obj);
         }
 
@@ -385,7 +385,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @return the next node
          */
         AVLNode next() {
-            if (rightIsNext || right == null) {
+//            if (rightIsNext || right == null) {
+            if (right == null) {
                 return right;
             }
             return right.min();
@@ -397,7 +398,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @return the previous node
          */
         AVLNode previous() {
-            if (leftIsPrevious || left == null) {
+//            if (leftIsPrevious || left == null) {
+            if (left == null) {
                 return left;
             }
             return left.max();
@@ -452,14 +454,16 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * Gets the left node, returning null if its a faedelung.
          */
         private AVLNode getLeftSubTree() {
-            return leftIsPrevious ? null : left;
+//            return leftIsPrevious ? null : left;
+            return left;
         }
 
         /**
          * Gets the right node, returning null if its a faedelung.
          */
         private AVLNode getRightSubTree() {
-            return rightIsNext ? null : right;
+//            return rightIsNext ? null : right;
+            return right;
         }
 
         /**
@@ -557,9 +561,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             if (heightRightMinusLeft() > 0) {
                 // more on the right, so delete from the right
                 final AVLNode rightMin = right.min();
-                if (leftIsPrevious) {
-                    setLeft(rightMin.left);
-                }
+//                if (leftIsPrevious) {
+//                    setLeft(rightMin.left);
+//                }
                 setRight(right.removeMin());
                 if (relativePosition < 0) {
                     relativePosition++;
@@ -568,17 +572,17 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             } else {
                 // more on the left or equal, so delete from the left
                 final AVLNode leftMax = left.max();
-                if (rightIsNext) {
-                    setRight(leftMax.right);
-                }
+//                if (rightIsNext) {
+//                    setRight(leftMax.right);
+//                }
                 final AVLNode leftPrevious = left.left;
                 setLeft(left.removeMax());
-                if (left == null) {
-                    // special case where left that was deleted was a double link
-                    // only occurs when height difference is equal
-                    leftIsPrevious = true;
-                    setLeft(leftPrevious);
-                }
+//                if (left == null) {
+//                    // special case where left that was deleted was a double link
+//                    // only occurs when height difference is equal
+//                    leftIsPrevious = true;
+//                    setLeft(leftPrevious);
+//                }
                 if (relativePosition > 0) {
                     relativePosition--;
                 }
@@ -699,8 +703,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @param previous the previous node in the linked list
          */
         private void setLeft(final AVLNode node, final AVLNode previous) {
-            leftIsPrevious = node == null;
-            setLeft(leftIsPrevious ? previous : node);
+//            leftIsPrevious = node == null;
+//            setLeft(leftIsPrevious ? previous : node);
+            setLeft(node);
             recalcHeight();
         }
 
@@ -711,7 +716,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          */
         private void setLeft(final AVLNode node) {
             left = node;
-            if (left != null && !leftIsPrevious) {
+//            if (left != null && !leftIsPrevious) {
+            if (left != null) {
                 left.parent = this;
             }
         }
@@ -723,8 +729,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @param next the next node in the linked list
          */
         private void setRight(final AVLNode node, final AVLNode next) {
-            rightIsNext = node == null;
-            setRight(rightIsNext ? next : node);
+//            rightIsNext = node == null;
+//            setRight(rightIsNext ? next : node);
+            setRight(node);
             recalcHeight();
         }
 
@@ -735,7 +742,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          */
         private void setRight(final AVLNode node) {
             right = node;
-            if (right != null && !rightIsNext) {
+//            if (right != null && !rightIsNext) {
+            if (right != null) {
                 right.parent = this;
             }
         }
@@ -745,11 +753,13 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          */
         private int countNodes() {
             int c = 1;
-            if (!leftIsPrevious && left != null) {
+//            if (!leftIsPrevious && left != null) {
+            if (left != null) {
                 assert(left.parent == this);
                 c += left.countNodes();
             }
-            if (!rightIsNext && right != null) {
+//            if (!rightIsNext && right != null) {
+            if (right != null) {
                 assert(right.parent == this);
                 c += right.countNodes();
             }
@@ -770,8 +780,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 .append(value)
                 .append(',')
                 .append(getRightSubTree() != null)
-                .append(", faedelung ")
-                .append(rightIsNext)
+//                .append(", faedelung ")
+//                .append(rightIsNext)
                 .append(" )")
                 .toString();
         }
@@ -852,6 +862,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             current = next;
             currentIndex = nextIndex++;
             next = next.next();
+            if (next == null) {
+                next = parent.root.get(nextIndex);
+            }
             return value;
         }
 
