@@ -226,14 +226,13 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> {
      */
     @Override
     protected void removeNode(AVLNode node) {
-        TreeSet<AVLNode> nodes = nodeMap.get(node.getValue());
+        TreeSet<AVLNode> nodes = nodeMap.remove(node.getValue());
         if (nodes == null) {
             return;
         }
-        // TODO replace key if necessary to save some memory
         nodes.remove(node);
-        if (nodes.isEmpty()) {
-            nodeMap.remove(node.getValue());
+        if (!nodes.isEmpty()) {
+            nodeMap.put(nodes.first().getValue(), nodes);
         }
     }
 
