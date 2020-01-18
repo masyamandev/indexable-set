@@ -42,8 +42,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
      */
     @Override
     public E get(final int index) {
-        checkInterval(index, 0, size() - 1);
-        return root.get(index).getValue();
+        return getNode(index).getValue();
     }
 
     /**
@@ -107,8 +106,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         return array;
     }
 
-    //-----------------------------------------------------------------------
-
     @Override
     public boolean add(E e) {
         if (!canAdd(e)) {
@@ -148,8 +145,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
      */
     @Override
     public E set(final int index, final E obj) {
-        checkInterval(index, 0, size() - 1);
-        final AVLNode node = root.get(index);
+        final AVLNode node = getNode(index);
         final E result = node.value;
         node.setValue(obj);
         return result;
@@ -205,6 +201,16 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     @Override
     public Spliterator<E> spliterator() {
         return Spliterators.spliterator(this, Spliterator.ORDERED);
+    }
+
+    /**
+     * Get node by it's index
+     * @param index index
+     * @return node
+     */
+    private AVLNode getNode(final int index) {
+        checkInterval(index, 0, size() - 1);
+        return root.get(index);
     }
 
     /**
