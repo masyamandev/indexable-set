@@ -42,8 +42,13 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
      */
     @Override
     public E get(final int index) {
+        final AVLNode avlNode = getNode(index);
+        return avlNode.getValue();
+    }
+
+    private AVLNode getNode(final int index) {
         checkInterval(index, 0, size() - 1);
-        return root.get(index).getValue();
+        return root.get(index);
     }
 
     /**
@@ -148,8 +153,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
      */
     @Override
     public E set(final int index, final E obj) {
-        checkInterval(index, 0, size() - 1);
-        final AVLNode node = root.get(index);
+        final AVLNode node = getNode(index);
         final E result = node.value;
         node.setValue(obj);
         return result;
@@ -165,10 +169,11 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     public E remove(final int index) {
         modCount++;
         checkInterval(index, 0, size() - 1);
-        final E result = get(index);
+        final AVLNode result = getNode(index);
+        removeNode(result);
         setRoot(root.remove(index));
         size--;
-        return result;
+        return result.value;
     }
 
     /**
@@ -325,9 +330,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @param obj the value to store
          */
         void setValue(final E obj) {
-            if (this.value != null) {
-                removeNode(this);
-            }
+//            if (this.value != null) {
+//                removeNode(this);
+//            }
             this.value = obj;
             addNode(this);
         }
@@ -541,7 +546,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @return the node that replaces this one in the parent
          */
         private AVLNode removeSelf() {
-            removeNode(this);
             if (getRightSubTree() == null && getLeftSubTree() == null) {
                 return null;
             }
@@ -564,19 +568,25 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
 //                if (leftIsPrevious) {
 //                    setLeft(rightMin.left);
 //                }
-                setRight(right.removeMin());
+                rightMin.setRight(right.removeMin());
+                rightMin.setLeft(left);
                 if (relativePosition < 0) {
                     relativePosition++;
                 }
-                setValue(rightMin.value);
+                rightMin.relativePosition = relativePosition;
+                rightMin.parent = parent;
+//                setValue(rightMin.value);
+                rightMin.recalcHeight();
+                return rightMin;
             } else {
                 // more on the left or equal, so delete from the left
                 final AVLNode leftMax = left.max();
 //                if (rightIsNext) {
 //                    setRight(leftMax.right);
 //                }
-                final AVLNode leftPrevious = left.left;
-                setLeft(left.removeMax());
+//                final AVLNode leftPrevious = left.left;
+                leftMax.setLeft(left.removeMax());
+                leftMax.setRight(right);
 //                if (left == null) {
 //                    // special case where left that was deleted was a double link
 //                    // only occurs when height difference is equal
@@ -586,10 +596,14 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 if (relativePosition > 0) {
                     relativePosition--;
                 }
-                setValue(leftMax.value);
+                leftMax.relativePosition = relativePosition;
+                leftMax.parent = parent;
+//                setValue(leftMax.value);
+                leftMax.recalcHeight();
+                return leftMax;
             }
-            recalcHeight();
-            return this;
+//            recalcHeight();
+//            return this;
         }
 
         //-----------------------------------------------------------------------
