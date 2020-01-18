@@ -110,6 +110,20 @@ public class TreeListSetTest {
     }
 
     @Test
+    public void removeFirstLast() throws Exception {
+        init();
+        while (!testListSet.isEmpty()) {
+            removeByIndex(0);
+            testListSet.remove(0);
+            if (testListSet.size() > 0) {
+                removeByIndex(testListSet.size() - 1);
+                testListSet.remove(testListSet.size() - 1);
+            }
+            assertReference();
+        }
+    }
+
+    @Test
     public void contains() throws Exception {
         init();
         for (int i = 0; i < iterations; i++) {
@@ -157,6 +171,7 @@ public class TreeListSetTest {
         for (int i = 0; i < iterations; i++) {
             testListSet.add(addRandom());
             testListSet.add(getRandomExisting());
+            testListSet.add(random.nextInt(elementsList.size() + 1), getRandomExisting());
             assertReference();
         }
     }
@@ -176,11 +191,15 @@ public class TreeListSetTest {
             // indexOf
             index = random.nextInt(elementsList.size());
             Long value = elementsList.get(index);
+            assertThat(testListSet.get(index)).isEqualTo(value);
             assertThat(testListSet.indexOf(value)).isEqualTo(index);
 
             // remove
-            testListSet.remove(removeRandomValue());
-            testListSet.remove(removeRandomIndex());
+            final Long valueToRemove = removeRandomValue();
+            assertThat(testListSet.remove(valueToRemove)).isTrue();
+            final int indexToRemove = removeRandomIndex();
+            final Long removedValue = testListSet.get(indexToRemove);
+            assertThat(testListSet.remove(indexToRemove)).isEqualTo(removedValue);
 
             // check add nulls
             try {
@@ -191,9 +210,51 @@ public class TreeListSetTest {
                 testListSet.add(random.nextInt(elementsList.size() + 1), null);
                 fail("No exception on adding null");
             } catch (NullPointerException e) {}
+            // check not existing indexOf
+            assertThat(testListSet.indexOf(random.nextLong())).isEqualTo(-1);
+            assertThat(testListSet.lastIndexOf(random.nextLong())).isEqualTo(-1);
+            assertThat(testListSet.remove(random.nextLong())).isFalse();
+
 
             assertReference();
         }
+    }
+
+    @Test
+    public void toArray() {
+        init();
+
+        for (int i = 0; i < iterations; i++) {
+            testListSet.add(addRandom());
+            testListSet.remove(removeRandomValue());
+            assertReference();
+        }
+
+        assertThat(testListSet.toArray()).containsExactlyElementsOf(elementsList);
+        assertThat(testListSet.toArray(new Long[0])).containsExactlyElementsOf(elementsList);
+    }
+
+    @Test
+    public void clear() {
+        init();
+        testListSet.clear();
+        elementsList.clear();
+        elementsSet.clear();
+        assertReference();
+    }
+
+    @Test
+    public void constructorWithColection() {
+        init();
+        testListSet = new TreeListSet<>(elementsList);
+        assertReference();
+    }
+
+    @Test
+    public void constructorWithTreeMap() {
+        init();
+        testListSet = new TreeListSet<>(elementsList, new TreeMap());
+        assertReference();
     }
 
     private void init() {
@@ -264,11 +325,15 @@ public class TreeListSetTest {
             return -1;
         }
         int index = random.nextInt(elementsList.size());
+        removeByIndex(index);
+        return index;
+    }
+
+    private void removeByIndex(final int index) {
         Long value = elementsList.get(index);
         elementsSet.remove(value);
         elementsList.remove(index);
         removedList.add(value);
-        return index;
     }
 
     private void assertReference() {
