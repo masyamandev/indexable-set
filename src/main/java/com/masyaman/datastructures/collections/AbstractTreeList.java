@@ -68,7 +68,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
      */
     @Override
     public Iterator<E> iterator() {
-        // override to go 75% faster
+        // override to go 50% faster
         return listIterator(0);
     }
 
@@ -79,7 +79,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
      */
     @Override
     public ListIterator<E> listIterator() {
-        // override to go 75% faster
+        // override to go 50% faster
         return listIterator(0);
     }
 
@@ -91,7 +91,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
      */
     @Override
     public ListIterator<E> listIterator(final int fromIndex) {
-        // override to go 75% faster
+        // override to go 50% faster
         // cannot use EmptyIterator as iterator.add() must work
         checkInterval(fromIndex, 0, size());
         return new TreeListIterator(this, fromIndex);
@@ -281,14 +281,10 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     class AVLNode {
         /** Parent node */
         private AVLNode parent;
-//        /** The left child node or the predecessor if {@link #leftIsPrevious}.*/
+        /** The left child node.*/
         private AVLNode left;
-//        /** Flag indicating that left reference is not a subtree but the predecessor. */
-//        private boolean leftIsPrevious;
-//        /** The right child node or the successor if {@link #rightIsNext}. */
+        /** The right child node. */
         private AVLNode right;
-//        /** Flag indicating that right reference is not a subtree but the successor. */
-//        private boolean rightIsNext;
         /** How many levels of left/right are below this one. */
         private int height;
         /** The relative position, root holds absolute position. */
@@ -307,11 +303,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         private AVLNode(final int relativePosition, final E obj,
                         final AVLNode parent, final AVLNode rightFollower, final AVLNode leftFollower) {
             this.relativePosition = relativePosition;
-//            this.rightIsNext = true;
-//            this.leftIsPrevious = true;
             this.parent = parent;
-//            setRight(rightFollower);
-//            setLeft(leftFollower);
             setValue(obj);
         }
 
@@ -330,9 +322,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @param obj the value to store
          */
         void setValue(final E obj) {
-//            if (this.value != null) {
-//                removeNode(this);
-//            }
+            if (this.value != null) {
+                removeNode(this);
+            }
             this.value = obj;
             addNode(this);
         }
@@ -390,7 +382,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @return the next node
          */
         AVLNode next() {
-//            if (rightIsNext || right == null) {
             if (right == null) {
                 return right;
             }
@@ -403,7 +394,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @return the previous node
          */
         AVLNode previous() {
-//            if (leftIsPrevious || left == null) {
             if (left == null) {
                 return left;
             }
@@ -431,9 +421,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 relativePosition++;
             }
             if (getLeftSubTree() == null) {
-                setLeft(new AVLNode(-1, obj, this, this, left), null);
+                setLeft(new AVLNode(-1, obj, this, this, left));
             } else {
-                setLeft(left.insert(indexRelativeToMe, obj), null);
+                setLeft(left.insert(indexRelativeToMe, obj));
             }
             final AVLNode ret = balance();
             recalcHeight();
@@ -445,9 +435,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 relativePosition--;
             }
             if (getRightSubTree() == null) {
-                setRight(new AVLNode(+1, obj, this, right, this), null);
+                setRight(new AVLNode(+1, obj, this, right, this));
             } else {
-                setRight(right.insert(indexRelativeToMe, obj), null);
+                setRight(right.insert(indexRelativeToMe, obj));
             }
             final AVLNode ret = balance();
             recalcHeight();
@@ -459,7 +449,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * Gets the left node, returning null if its a faedelung.
          */
         private AVLNode getLeftSubTree() {
-//            return leftIsPrevious ? null : left;
             return left;
         }
 
@@ -467,7 +456,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * Gets the right node, returning null if its a faedelung.
          */
         private AVLNode getRightSubTree() {
-//            return rightIsNext ? null : right;
             return right;
         }
 
@@ -502,12 +490,12 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 return removeSelf();
             }
             if (indexRelativeToMe > 0) {
-                setRight(right.remove(indexRelativeToMe), right.right);
+                setRight(right.remove(indexRelativeToMe));
                 if (relativePosition < 0) {
                     relativePosition++;
                 }
             } else {
-                setLeft(left.remove(indexRelativeToMe), left.left);
+                setLeft(left.remove(indexRelativeToMe));
                 if (relativePosition > 0) {
                     relativePosition--;
                 }
@@ -520,7 +508,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             if (getRightSubTree() == null) {
                 return removeSelf();
             }
-            setRight(right.removeMax(), right.right);
+            setRight(right.removeMax());
             if (relativePosition < 0) {
                 relativePosition++;
             }
@@ -532,7 +520,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             if (getLeftSubTree() == null) {
                 return removeSelf();
             }
-            setLeft(left.removeMin(), left.left);
+            setLeft(left.removeMin());
             if (relativePosition > 0) {
                 relativePosition--;
             }
@@ -553,21 +541,18 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 if (relativePosition > 0) {
                     left.relativePosition += relativePosition + (relativePosition > 0 ? 0 : 1);
                 }
-                left.max().setRight(null, right);
+                left.max().setRightAndRecalculateHeight(null);
                 return left;
             }
             if (getLeftSubTree() == null) {
                 right.relativePosition += relativePosition - (relativePosition < 0 ? 0 : 1);
-                right.min().setLeft(null, left);
+                right.min().setLeftAndRecalculateHeight(null);
                 return right;
             }
 
             if (heightRightMinusLeft() > 0) {
                 // more on the right, so delete from the right
                 final AVLNode rightMin = right.min();
-//                if (leftIsPrevious) {
-//                    setLeft(rightMin.left);
-//                }
                 rightMin.setRight(right.removeMin());
                 rightMin.setLeft(left);
                 if (relativePosition < 0) {
@@ -575,35 +560,21 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 }
                 rightMin.relativePosition = relativePosition;
                 rightMin.parent = parent;
-//                setValue(rightMin.value);
                 rightMin.recalcHeight();
                 return rightMin;
             } else {
                 // more on the left or equal, so delete from the left
                 final AVLNode leftMax = left.max();
-//                if (rightIsNext) {
-//                    setRight(leftMax.right);
-//                }
-//                final AVLNode leftPrevious = left.left;
                 leftMax.setLeft(left.removeMax());
                 leftMax.setRight(right);
-//                if (left == null) {
-//                    // special case where left that was deleted was a double link
-//                    // only occurs when height difference is equal
-//                    leftIsPrevious = true;
-//                    setLeft(leftPrevious);
-//                }
                 if (relativePosition > 0) {
                     relativePosition--;
                 }
                 leftMax.relativePosition = relativePosition;
                 leftMax.parent = parent;
-//                setValue(leftMax.value);
                 leftMax.recalcHeight();
                 return leftMax;
             }
-//            recalcHeight();
-//            return this;
         }
 
         //-----------------------------------------------------------------------
@@ -618,12 +589,12 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                     return this;
                 case -2 :
                     if (left.heightRightMinusLeft() > 0) {
-                        setLeft(left.rotateLeft(), null);
+                        setLeftAndRecalculateHeight(left.rotateLeft());
                     }
                     return rotateRight();
                 case 2 :
                     if (right.heightRightMinusLeft() < 0) {
-                        setRight(right.rotateRight(), null);
+                        setRightAndRecalculateHeight(right.rotateRight());
                     }
                     return rotateLeft();
                 default :
@@ -677,15 +648,15 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         }
 
         private AVLNode rotateLeft() {
-            final AVLNode newTop = right; // can't be faedelung!
+            final AVLNode newTop = right;
             final AVLNode movedNode = getRightSubTree().getLeftSubTree();
 
             final int newTopPosition = relativePosition + getOffset(newTop);
             final int myNewPosition = -newTop.relativePosition;
             final int movedPosition = getOffset(newTop) + getOffset(movedNode);
 
-            setRight(movedNode, newTop);
-            newTop.setLeft(this, null);
+            setRightAndRecalculateHeight(movedNode);
+            newTop.setLeftAndRecalculateHeight(this);
 
             setOffset(newTop, newTopPosition);
             setOffset(this, myNewPosition);
@@ -694,15 +665,15 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         }
 
         private AVLNode rotateRight() {
-            final AVLNode newTop = left; // can't be faedelung
+            final AVLNode newTop = left;
             final AVLNode movedNode = getLeftSubTree().getRightSubTree();
 
             final int newTopPosition = relativePosition + getOffset(newTop);
             final int myNewPosition = -newTop.relativePosition;
             final int movedPosition = getOffset(newTop) + getOffset(movedNode);
 
-            setLeft(movedNode, newTop);
-            newTop.setRight(this, null);
+            setLeftAndRecalculateHeight(movedNode);
+            newTop.setRightAndRecalculateHeight(this);
 
             setOffset(newTop, newTopPosition);
             setOffset(this, myNewPosition);
@@ -714,11 +685,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * Sets the left field to the node, or the previous node if that is null
          *
          * @param node the new left subtree node
-         * @param previous the previous node in the linked list
          */
-        private void setLeft(final AVLNode node, final AVLNode previous) {
-//            leftIsPrevious = node == null;
-//            setLeft(leftIsPrevious ? previous : node);
+        private void setLeftAndRecalculateHeight(final AVLNode node) {
             setLeft(node);
             recalcHeight();
         }
@@ -730,7 +698,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          */
         private void setLeft(final AVLNode node) {
             left = node;
-//            if (left != null && !leftIsPrevious) {
             if (left != null) {
                 left.parent = this;
             }
@@ -740,11 +707,8 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * Sets the right field to the node, or the next node if that is null
          *
          * @param node the new left subtree node
-         * @param next the next node in the linked list
          */
-        private void setRight(final AVLNode node, final AVLNode next) {
-//            rightIsNext = node == null;
-//            setRight(rightIsNext ? next : node);
+        private void setRightAndRecalculateHeight(final AVLNode node) {
             setRight(node);
             recalcHeight();
         }
@@ -756,7 +720,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          */
         private void setRight(final AVLNode node) {
             right = node;
-//            if (right != null && !rightIsNext) {
             if (right != null) {
                 right.parent = this;
             }
@@ -767,12 +730,10 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          */
         private int countNodes() {
             int c = 1;
-//            if (!leftIsPrevious && left != null) {
             if (left != null) {
                 assert(left.parent == this);
                 c += left.countNodes();
             }
-//            if (!rightIsNext && right != null) {
             if (right != null) {
                 assert(right.parent == this);
                 c += right.countNodes();
@@ -793,9 +754,6 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 .append(',')
                 .append(value)
                 .append(',')
-                .append(getRightSubTree() != null)
-//                .append(", faedelung ")
-//                .append(rightIsNext)
                 .append(" )")
                 .toString();
         }
