@@ -42,8 +42,12 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
      */
     @Override
     public E get(final int index) {
+        return getAvlNode(index).getValue().value;
+    }
+
+    private AVLNode getAvlNode(final int index) {
         checkInterval(index, 0, size() - 1);
-        return root.get(index).getValue();
+        return root.get(index);
     }
 
     /**
@@ -148,10 +152,10 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
      */
     @Override
     public E set(final int index, final E obj) {
-        checkInterval(index, 0, size() - 1);
-        final AVLNode node = root.get(index);
-        final E result = node.value;
-        node.setValue(obj);
+        final AVLNode node = getAvlNode(index);
+        final E result = node.value.value;
+        node.value.setValue(obj);
+        addNode(node.value);
         return result;
     }
 
@@ -165,10 +169,11 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     public E remove(final int index) {
         modCount++;
         checkInterval(index, 0, size() - 1);
-        final E result = get(index);
+        final ValueHolder result = getAvlNode(index).getValue();
+        removeNode(result);
         setRoot(root.remove(index));
         size--;
-        return result;
+        return result.getValue();
     }
 
     /**
@@ -226,12 +231,12 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
     /**
      * Add node to nodeMap.
      */
-    abstract protected void addNode(AVLNode node);
+    abstract protected void addNode(ValueHolder node);
 
     /**
      * Remove node from nodeMap.
      */
-    abstract protected void removeNode(AVLNode node);
+    abstract protected void removeNode(ValueHolder node);
 
     //-----------------------------------------------------------------------
     /**
@@ -289,7 +294,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         /** The relative position, root holds absolute position. */
         private int relativePosition;
         /** The stored element. */
-        private E value;
+        private ValueHolder value;
 
         /**
          * Constructs a new node with a relative position.
@@ -307,7 +312,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             this.parent = parent;
 //            setRight(rightFollower);
 //            setLeft(leftFollower);
-            setValue(obj);
+            setValue(new ValueHolder(obj, this));
         }
 
         /**
@@ -315,7 +320,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          *
          * @return the value of this node
          */
-        E getValue() {
+        ValueHolder getValue() {
             return value;
         }
 
@@ -324,12 +329,13 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          *
          * @param obj the value to store
          */
-        void setValue(final E obj) {
-            if (this.value != null) {
-                removeNode(this);
-            }
+        void setValue(final ValueHolder obj) {
+//            if (this.value != null) {
+//                removeNode(this);
+//            }
             this.value = obj;
-            addNode(this);
+            obj.node = this;
+//            addNode(this);
         }
 
         /**
@@ -541,7 +547,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @return the node that replaces this one in the parent
          */
         private AVLNode removeSelf() {
-            removeNode(this);
+//            removeNode(this.value);
             if (getRightSubTree() == null && getLeftSubTree() == null) {
                 return null;
             }
@@ -777,7 +783,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 .append(',')
                 .append(left != null)
                 .append(',')
-                .append(value)
+                .append(value.value)
                 .append(',')
                 .append(getRightSubTree() != null)
 //                .append(", faedelung ")
@@ -858,13 +864,10 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             if (next == null) {
                 next = parent.root.get(nextIndex);
             }
-            final E value = next.getValue();
+            final E value = next.getValue().value;
             current = next;
             currentIndex = nextIndex++;
             next = next.next();
-            if (next == null) {
-                next = parent.root.get(nextIndex);
-            }
             return value;
         }
 
@@ -882,7 +885,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             } else {
                 next = next.previous();
             }
-            final E value = next.getValue();
+            final E value = next.getValue().value;
             current = next;
             currentIndex = --nextIndex;
             return value;
@@ -919,7 +922,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             if (current == null) {
                 throw new IllegalStateException();
             }
-            current.setValue(obj);
+            current.getValue().setValue(obj);
         }
 
         public void add(final E obj) {
@@ -932,4 +935,41 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
         }
     }
 
+    class ValueHolder {
+        private E value;
+        private AVLNode node;
+
+        public ValueHolder(final E value, final AVLNode node) {
+            this.node = node;
+            setValue(value);
+        }
+
+        public E getValue() {
+            return value;
+        }
+
+        public void setValue(final E value) {
+            if (this.value != null) { // TODO
+                removeNode(this);
+            }
+            this.value = value;
+            addNode(this);
+        }
+
+        public AVLNode getNode() {
+            return node;
+        }
+
+        public void setNode(final AVLNode node) {
+            this.node = node;
+        }
+
+        @Override
+        public String toString() {
+            return "ValueHolder{" +
+                    "value=" + value +
+                    ", node=" + node +
+                    '}';
+        }
+    }
 }

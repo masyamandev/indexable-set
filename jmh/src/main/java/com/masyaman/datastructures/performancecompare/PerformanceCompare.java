@@ -38,7 +38,8 @@ public class PerformanceCompare {
 //        @Param({"100", "1000", "10000", "100000", "1000000"})
         public int size;
 
-        @Param({"TreeList", "TreeListSet", "IndexedTreeList"})
+        @Param({"TreeListSet"})
+//        @Param({"TreeList", "TreeListSet", "IndexedTreeList"})
         public String className;
 
         private Random random;

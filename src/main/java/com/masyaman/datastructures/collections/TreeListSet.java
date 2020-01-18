@@ -54,7 +54,7 @@ import java.util.*;
 public class TreeListSet<E> extends AbstractTreeList<E> implements Set<E> {
 
     /** Map from element to it's node or nodes */
-    protected final Map<E, AVLNode> nodeMap;
+    protected final Map<E, ValueHolder> nodeMap;
 
     //-----------------------------------------------------------------------
     /**
@@ -108,7 +108,7 @@ public class TreeListSet<E> extends AbstractTreeList<E> implements Set<E> {
      */
     @Override
     public int indexOf(final Object object) {
-        AVLNode node = nodeMap.get(object);
+        AVLNode node = nodeMap.get(object).getNode();
         if (node == null) {
             return -1;
         }
@@ -161,7 +161,7 @@ public class TreeListSet<E> extends AbstractTreeList<E> implements Set<E> {
      * Add node to nodeMap.
      */
     @Override
-    protected void addNode(AVLNode node) {
+    protected void addNode(ValueHolder node) {
         nodeMap.put(node.getValue(), node);
     }
 
@@ -169,7 +169,7 @@ public class TreeListSet<E> extends AbstractTreeList<E> implements Set<E> {
      * Remove node from nodeMap.
      */
     @Override
-    protected void removeNode(AVLNode node) {
+    protected void removeNode(ValueHolder node) {
         nodeMap.remove(node.getValue());
     }
 

@@ -62,11 +62,11 @@ import java.util.function.Function;
  */
 public class IndexedTreeList<E> extends AbstractTreeList<E> {
 
-    private final Comparator<AVLNode> NODE_COMPARATOR = Comparator.comparingInt(AVLNode::getPosition);
-    private final Function<E, TreeSet<AVLNode>> NEW_NODE_TREE_SET = k -> new TreeSet(NODE_COMPARATOR);
+    private final Comparator<ValueHolder> NODE_COMPARATOR = Comparator.comparingInt(v -> v.getNode().getPosition());
+    private final Function<E, TreeSet<ValueHolder>> NEW_NODE_TREE_SET = k -> new TreeSet(NODE_COMPARATOR);
 
     /** Map from element to it's node or nodes */
-    protected final Map<E, TreeSet<AVLNode>> nodeMap;
+    protected final Map<E, TreeSet<ValueHolder>> nodeMap;
 
     //-----------------------------------------------------------------------
     /**
@@ -120,11 +120,11 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> {
      */
     @Override
     public int indexOf(final Object object) {
-        TreeSet<AVLNode> nodes = nodeMap.get(object);
+        TreeSet<ValueHolder> nodes = nodeMap.get(object);
         if (nodes == null || nodes.isEmpty()) {
             return -1;
         }
-        return nodes.first().getPosition();
+        return nodes.first().getNode().getPosition();
     }
 
     /**
@@ -135,11 +135,11 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> {
      */
     @Override
     public int lastIndexOf(final Object object) {
-        TreeSet<AVLNode> nodes = nodeMap.get(object);
+        TreeSet<ValueHolder> nodes = nodeMap.get(object);
         if (nodes == null || nodes.isEmpty()) {
             return -1;
         }
-        return nodes.last().getPosition();
+        return nodes.last().getNode().getPosition();
     }
 
     /**
@@ -149,14 +149,14 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> {
      * @return array of indexes of the objects
      */
     public int[] indexes(final Object object) {
-        TreeSet<AVLNode> nodes = nodeMap.get(object);
+        TreeSet<ValueHolder> nodes = nodeMap.get(object);
         if (nodes == null || nodes.isEmpty()) {
             return new int[0];
         }
         int[] indexes = new int[nodes.size()];
         int i = 0;
-        for (AVLNode node : nodes) {
-            indexes[i++] = node.getPosition();
+        for (ValueHolder node : nodes) {
+            indexes[i++] = node.getNode().getPosition();
         }
         return indexes;
     }
@@ -168,7 +168,7 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> {
      * @return amount of objects
      */
     public int count(final Object object) {
-        TreeSet<AVLNode> nodes = nodeMap.get(object);
+        TreeSet<ValueHolder> nodes = nodeMap.get(object);
         if (nodes == null || nodes.isEmpty()) {
             return 0;
         }
@@ -217,7 +217,7 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> {
      * Add node to nodeMap.
      */
     @Override
-    protected void addNode(AVLNode node) {
+    protected void addNode(ValueHolder node) {
         nodeMap.computeIfAbsent(node.getValue(), NEW_NODE_TREE_SET).add(node);
     }
 
@@ -225,8 +225,8 @@ public class IndexedTreeList<E> extends AbstractTreeList<E> {
      * Remove node from nodeMap.
      */
     @Override
-    protected void removeNode(AVLNode node) {
-        TreeSet<AVLNode> nodes = nodeMap.get(node.getValue());
+    protected void removeNode(ValueHolder node) {
+        TreeSet<ValueHolder> nodes = nodeMap.get(node.getValue());
         if (nodes == null) {
             return;
         }
