@@ -496,7 +496,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
             final int indexRelativeToMe = index - relativePosition;
 
             if (indexRelativeToMe == 0) {
-                return removeSelf();
+                return removeSelf(true);
             }
             if (indexRelativeToMe > 0) {
                 setRight(right.remove(indexRelativeToMe), right.right);
@@ -515,7 +515,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
 
         private AVLNode removeMax() {
             if (getRightSubTree() == null) {
-                return removeSelf();
+                return removeSelf(false);
             }
             setRight(right.removeMax(), right.right);
             if (relativePosition < 0) {
@@ -527,7 +527,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
 
         private AVLNode removeMin() {
             if (getLeftSubTree() == null) {
-                return removeSelf();
+                return removeSelf(false);
             }
             setLeft(left.removeMin(), left.left);
             if (relativePosition > 0) {
@@ -542,8 +542,12 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          *
          * @return the node that replaces this one in the parent
          */
-        private AVLNode removeSelf() {
+        private AVLNode removeSelf(boolean removeValue) {
             removeNode(this);
+            if (removeValue) {
+                // avoid further calling removeNode(this) when value is overwritten
+                value = null;
+            }
             if (getRightSubTree() == null && getLeftSubTree() == null) {
                 return null;
             }
