@@ -568,7 +568,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 // more on the right, so delete from the right
                 final AVLNode rightMin = right.min();
                 if (leftIsPrevious) {
-                    setLeft(rightMin.left); // TODO This line is not covered by tests!!!
+                    // WARN: This line is not covered by tests. I'm not sure if it's possible to reach this line somehow.
+                    // Original TreeList has the same issue.
+                    setLeft(rightMin.left);
                 }
                 setRight(right.removeMin());
                 if (relativePosition < 0) {
@@ -579,7 +581,9 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
                 // more on the left or equal, so delete from the left
                 final AVLNode leftMax = left.max();
                 if (rightIsNext) {
-                    setRight(leftMax.right); // TODO This line is not covered by tests!!!
+                    // WARN: This line is not covered by tests. I'm not sure if it's possible to reach this line somehow.
+                    // Original TreeList has the same issue.
+                    setRight(leftMax.right);
                 }
                 final AVLNode leftPrevious = left.left;
                 setLeft(left.removeMax());
