@@ -7,6 +7,8 @@ import org.junit.runners.Parameterized;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -84,6 +86,39 @@ public class IndexedTreeListTest {
         for (int i = 0; i < iterations; i++) {
             int index = random.nextInt(elementsList.size() + 1);
             testList.add(index, addRandom(index));
+            assertReference();
+        }
+    }
+
+    @Test
+    public void setNewValue() throws Exception {
+        init();
+        for (int i = 0; i < iterations; i++) {
+            int index = random.nextInt(elementsList.size());
+            final Long value = elementsList.get(index);
+            elementsSet.remove(value);
+            final long newValue = random.nextLong();
+            elementsSet.add(newValue);
+            elementsList.set(index, newValue);
+            testList.set(index, newValue);
+            assertReference();
+        }
+    }
+
+    @Test
+    public void setExistingValue() throws Exception {
+        init();
+        final List<Integer> indexes = IntStream.range(0, iterations)
+                .mapToObj(Integer::valueOf)
+                .collect(Collectors.toList());
+        Collections.shuffle(indexes, random);
+        for (int i = 0; i < indexes.size() - 1; i += 2) {
+            int indexFrom = indexes.get(i);
+            int indexTo = indexes.get(i + 1);
+            final Long value = elementsList.get(indexFrom);
+            elementsSet.remove(elementsList.get(indexTo));
+            elementsList.set(indexTo, value);
+            testList.set(indexTo, value);
             assertReference();
         }
     }

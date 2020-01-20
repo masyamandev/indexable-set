@@ -138,6 +138,27 @@ public class TreeListSet<E> extends AbstractTreeList<E> implements Set<E> {
     }
 
     /**
+     * Sets the element at the specified index.
+     * If specified value already exist in Set, it will be removed at old position.
+     * E.g. if TreeListSet contains ["A", "B", "C"] and set(2, "A") is invoked, then result will be ["B", "A"].
+     *
+     * @param index the index to set
+     * @param obj the object to store at the specified index
+     * @return
+     */
+    @Override
+    public E set(int index, final E obj) {
+        final int pos = indexOf(obj);
+        if (pos >= 0 && pos != index) {
+            remove(pos);
+            if (pos < index) {
+                index--;
+            }
+        }
+        return super.set(index, obj);
+    }
+
+    /**
      * Clears the list, removing all entries.
      */
     @Override

@@ -88,6 +88,40 @@ public class TreeListSetTest {
     }
 
     @Test
+    public void setNewValue() throws Exception {
+        init();
+        for (int i = 0; i < iterations; i++) {
+            int index = random.nextInt(elementsList.size());
+            final Long value = elementsList.get(index);
+            elementsSet.remove(value);
+            final long newValue = random.nextLong();
+            elementsSet.add(newValue);
+            elementsList.set(index, newValue);
+            final Long oldValue = testListSet.set(index, newValue);
+            assertThat(oldValue).isEqualTo(value);
+            assertReference();
+        }
+    }
+
+    @Test
+    public void exceptionOnSetNewValue() throws Exception {
+        init();
+        for (int i = 0; i < iterations; i++) {
+            int indexFrom = random.nextInt(elementsList.size());
+            int indexTo = random.nextInt(elementsList.size());
+            final Long value = elementsList.get(indexFrom);
+            final Long oldValue = testListSet.set(indexTo, value);
+            assertThat(oldValue).isEqualTo(elementsList.get(indexTo));
+            if (indexFrom != indexTo) {
+                elementsSet.remove(elementsList.get(indexTo));
+                elementsList.set(indexTo, elementsList.get(indexFrom));
+                elementsList.remove(indexFrom);
+            }
+            assertReference();
+        }
+    }
+
+    @Test
     public void removeByIndex() throws Exception {
         init();
         while (!testListSet.isEmpty()) {
