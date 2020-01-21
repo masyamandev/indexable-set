@@ -1,6 +1,5 @@
 package com.masyaman.datastructures.collections;
 
-import org.apache.commons.collections4.list.TreeList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +10,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-public class ListIteratorTest {
+public class IndexedTreeListIteratorTest {
 
     private Random random;
     private Set<Long> elementsSet;
@@ -24,7 +23,7 @@ public class ListIteratorTest {
     private int seed;
     private int iterations;
 
-    public ListIteratorTest(Class listClass, int seed, int iterations) {
+    public IndexedTreeListIteratorTest(Class listClass, int seed, int iterations) {
         this.listClass = listClass;
         this.seed = seed;
         this.iterations = iterations;
@@ -42,14 +41,14 @@ public class ListIteratorTest {
     @Parameterized.Parameters(name = "{0} {1} {2}")
     public static Collection parameters() {
         return Arrays.asList(new Object[][] {
-                {TreeListSet.class, 9999, 1},
-                {TreeListSet.class, 9999, 2},
-                {TreeListSet.class, 9999, 3},
-                {TreeListSet.class, 9999, 4},
-                {TreeListSet.class, 9999, 5},
-                {TreeListSet.class, 9999, 10},
-                {TreeListSet.class, 9999, 100},
-                {TreeListSet.class, 9999, 1000},
+                { IndexedTreeListSet.class, 9999, 1},
+                { IndexedTreeListSet.class, 9999, 2},
+                { IndexedTreeListSet.class, 9999, 3},
+                { IndexedTreeListSet.class, 9999, 4},
+                { IndexedTreeListSet.class, 9999, 5},
+                { IndexedTreeListSet.class, 9999, 10},
+                { IndexedTreeListSet.class, 9999, 100},
+                { IndexedTreeListSet.class, 9999, 1000},
 //                {TreeListSet.class, 9999, 10000},
 
                 {IndexedTreeList.class, 9999, 1},
@@ -318,8 +317,8 @@ public class ListIteratorTest {
         }
         assertThat(elementsList).isEqualTo(testList);
 
-        if (testList instanceof AbstractTreeList) {
-            ((AbstractTreeList) testList).assertConsistent();
+        if (testList instanceof AbstractIndexedTreeList) {
+            ((AbstractIndexedTreeList) testList).assertConsistent();
         }
     }
 }

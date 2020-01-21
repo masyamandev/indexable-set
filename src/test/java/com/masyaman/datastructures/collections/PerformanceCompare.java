@@ -1,6 +1,5 @@
 package com.masyaman.datastructures.collections;
 
-import org.apache.commons.collections4.list.TreeList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,11 +50,11 @@ public class PerformanceCompare {
 //                {TreeList.class, 100000},
 //                {ArrayList.class, 100000},
 
-                {TreeListSet.class, 10},
-                {TreeListSet.class, 100},
-                {TreeListSet.class, 1000},
-                {TreeListSet.class, 10000},
-                {TreeListSet.class, 100000},
+                { IndexedTreeListSet.class, 10},
+                { IndexedTreeListSet.class, 100},
+                { IndexedTreeListSet.class, 1000},
+                { IndexedTreeListSet.class, 10000},
+                { IndexedTreeListSet.class, 100000},
 //                {TreeListSet.class, 1000000},
 //                {TreeListSet.class, 10000000},
 

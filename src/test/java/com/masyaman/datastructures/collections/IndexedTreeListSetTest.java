@@ -11,19 +11,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 @RunWith(Parameterized.class)
-public class TreeListSetTest {
+public class IndexedTreeListSetTest {
 
     private Random random;
     private Set<Long> elementsSet;
     private List<Long> elementsList;
     private List<Long> removedList;
 
-    private TreeListSet<Long> testListSet;
+    private IndexedTreeListSet<Long> testListSet;
 
     private int seed;
     private int iterations;
 
-    public TreeListSetTest(int seed, int iterations) {
+    public IndexedTreeListSetTest(int seed, int iterations) {
         this.seed = seed;
         this.iterations = iterations;
     }
@@ -34,7 +34,7 @@ public class TreeListSetTest {
         elementsSet = new HashSet<>();
         elementsList = new ArrayList<>();
         removedList = new ArrayList<>();
-        testListSet = new TreeListSet<>();
+        testListSet = new IndexedTreeListSet<>();
     }
 
     @Parameterized.Parameters(name = "{0} {1}")
@@ -280,14 +280,14 @@ public class TreeListSetTest {
     @Test
     public void constructorWithColection() {
         init();
-        testListSet = new TreeListSet<>(elementsList);
+        testListSet = new IndexedTreeListSet<>(elementsList);
         assertReference();
     }
 
     @Test
     public void constructorWithTreeMap() {
         init();
-        testListSet = new TreeListSet<>(elementsList, new TreeMap());
+        testListSet = new IndexedTreeListSet<>(elementsList, new TreeMap());
         assertReference();
     }
 

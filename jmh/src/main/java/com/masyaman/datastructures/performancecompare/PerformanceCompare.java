@@ -1,7 +1,7 @@
 package com.masyaman.datastructures.performancecompare;
 
 import com.masyaman.datastructures.collections.IndexedTreeList;
-import com.masyaman.datastructures.collections.TreeListSet;
+import com.masyaman.datastructures.collections.IndexedTreeListSet;
 import org.apache.commons.collections4.list.TreeList;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 @Measurement(iterations = 5)
 public class PerformanceCompare {
 
-    public static final Map<String, Class> CLASSES = Stream.of(TreeList.class, TreeListSet.class, IndexedTreeList.class)
+    public static final Map<String, Class> CLASSES = Stream.of(TreeList.class, IndexedTreeListSet.class, IndexedTreeList.class)
             .collect(Collectors.toMap(c -> c.getSimpleName(), c -> c));
 
     @State(Scope.Benchmark)
@@ -38,7 +38,7 @@ public class PerformanceCompare {
 //        @Param({"100", "1000", "10000", "100000", "1000000"})
         public int size;
 
-        @Param({"TreeList", "TreeListSet", "IndexedTreeList"})
+        @Param({"TreeList", "IndexedTreeListSet", "IndexedTreeList"})
         public String className;
 
         private Random random;

@@ -19,13 +19,13 @@ package com.masyaman.datastructures.collections;
 import java.util.*;
 
 /**
- * Common class for indexable tree lists.
+ * Common class for indexed tree lists.
  *
  * Code is based on apache common collections <code>TreeList</code>.
  *
  * @author Aleksandr Maksymenko
  */
-abstract class AbstractTreeList<E> extends AbstractList<E> {
+abstract class AbstractIndexedTreeList<E> extends AbstractList<E> {
 
     /** The root node in the AVL tree */
     protected AVLNode root;
@@ -796,7 +796,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
      */
     private class TreeListIterator implements ListIterator<E> { // TODO implements ListIterator<E>, OrderedIterator<E>
         /** The parent list */
-        private final AbstractTreeList parent;
+        private final AbstractIndexedTreeList parent;
         /**
          * Cache of the next node that will be returned by {@link #next()}.
          */
@@ -828,7 +828,7 @@ abstract class AbstractTreeList<E> extends AbstractList<E> {
          * @param parent the parent list
          * @param fromIndex the index to start at
          */
-        protected TreeListIterator(final AbstractTreeList<E> parent, final int fromIndex) throws IndexOutOfBoundsException {
+        protected TreeListIterator(final AbstractIndexedTreeList<E> parent, final int fromIndex) throws IndexOutOfBoundsException {
             super();
             this.parent = parent;
             this.expectedModCount = parent.modCount;
