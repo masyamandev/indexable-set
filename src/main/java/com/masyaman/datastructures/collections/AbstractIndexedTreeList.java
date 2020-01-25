@@ -920,11 +920,17 @@ abstract class AbstractIndexedTreeList<E> extends AbstractList<E> {
             if (current == null) {
                 throw new IllegalStateException();
             }
+            if (!canAdd(obj)) {
+                throw new IllegalArgumentException("Unable to set specified element");
+            }
             current.setValue(obj);
         }
 
         public void add(final E obj) {
             checkModCount();
+            if (!canAdd(obj)) {
+                throw new IllegalArgumentException("Unable to add specified element");
+            }
             parent.add(nextIndex, obj);
             current = null;
             currentIndex = -1;

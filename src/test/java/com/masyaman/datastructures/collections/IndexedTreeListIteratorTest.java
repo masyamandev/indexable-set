@@ -49,7 +49,7 @@ public class IndexedTreeListIteratorTest {
                 { IndexedTreeListSet.class, 9999, 10},
                 { IndexedTreeListSet.class, 9999, 100},
                 { IndexedTreeListSet.class, 9999, 1000},
-//                {TreeListSet.class, 9999, 10000},
+//                {IndexedTreeListSet.class, 9999, 10000},
 
                 {IndexedTreeList.class, 9999, 1},
                 {IndexedTreeList.class, 9999, 2},
@@ -78,7 +78,7 @@ public class IndexedTreeListIteratorTest {
 //        ArrayList params = new ArrayList();
 //        Random r = new Random();
 //        for (int i = 0; i < 1000; i++) {
-//            params.add(new Object[] {TreeListSet.class, r.nextInt(), r.nextInt(1 << (r.nextInt(12))) + 1});
+//            params.add(new Object[] {IndexedTreeListSet.class, r.nextInt(), r.nextInt(1 << (r.nextInt(12))) + 1});
 //            params.add(new Object[] {IndexedTreeList.class, r.nextInt(), r.nextInt(1 << (r.nextInt(12))) + 1});
 //            params.add(new Object[] {TreeList.class, r.nextInt(), r.nextInt(1 << (r.nextInt(12))) + 1});
 //        }

@@ -41,11 +41,11 @@ public class PerformanceCompare {
     @Parameterized.Parameters(name = "{0} {1}")
     public static Collection parameters() {
         return Arrays.asList(new Object[][] {
-//                {TreeListSet.class, 10000},
+//                {IndexedTreeListSet.class, 10000},
 //                {IndexedTreeList.class, 10000},
 //                {TreeList.class, 10000},
 //                {ArrayList.class, 10000},
-//                {TreeListSet.class, 100000},
+//                {IndexedTreeListSet.class, 100000},
 //                {IndexedTreeList.class, 100000},
 //                {TreeList.class, 100000},
 //                {ArrayList.class, 100000},
@@ -55,8 +55,8 @@ public class PerformanceCompare {
                 { IndexedTreeListSet.class, 1000},
                 { IndexedTreeListSet.class, 10000},
                 { IndexedTreeListSet.class, 100000},
-//                {TreeListSet.class, 1000000},
-//                {TreeListSet.class, 10000000},
+//                {IndexedTreeListSet.class, 1000000},
+//                {IndexedTreeListSet.class, 10000000},
 
                 {IndexedTreeList.class, 10},
                 {IndexedTreeList.class, 100},
