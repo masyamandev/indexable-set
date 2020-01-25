@@ -68,6 +68,8 @@ abstract class AbstractIndexedTreeList<E> extends AbstractList<E> {
 
     /**
      * Gets a ListIterator over the list.
+     * WARN: ListIterator may throw IllegalArgumentException on set(obj) and add(obj) methods if collection is
+     * IndexedTreeListSet and obj is already in collection.
      *
      * @return the new iterator
      */
@@ -79,6 +81,8 @@ abstract class AbstractIndexedTreeList<E> extends AbstractList<E> {
 
     /**
      * Gets a ListIterator over the list.
+     * WARN: ListIterator may throw IllegalArgumentException on set(obj) and add(obj) methods if collection is
+     * IndexedTreeListSet and obj is already in collection.
      *
      * @param fromIndex the index to start from
      * @return the new iterator
