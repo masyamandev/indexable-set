@@ -1,19 +1,19 @@
 # Overview
 
-TreeListSet is a data structure which can be described as a sequence of unique elements. 
+IndexedTreeListSet is a data structure which can be described as a sequence of unique elements. 
 All main operations like access to any element by index, insert to and remove from 
 any position of sequence have complexity of O(log n). Unlike other sequences it provides 
 search capabilities: it’s allows to check if sequence contains some element and get it’s 
 position in sequence with complexity O(log n).
 
-TreeListSet implements both List and Set.
+IndexedTreeListSet implements both List and Set.
 
-IndexedTreeSet is the similar structure, but it does not have restriction for unique objects.
-This structure is slightly slower than TreeListSet.
+IndexedTreeList is the similar structure, but it does not have restriction for unique objects.
+This structure is slightly slower than IndexedTreeListSet.
 
 # Comparing with other data structures
 
-Feature | ArrayList | LinkedList | TreeSet | HashSet | (apache) TreeList | TreeListSet | IndexedTreeListSet*
+Feature | ArrayList | LinkedList | TreeSet | HashSet | (apache) TreeList | IndexedTreeListSet | IndexedTreeList*
 --- | --- | --- | --- | --- | --- | --- | ---
 Sequence (List) | + | + | - | - | + | + | +
 Unique elements (Set) | - | - | + | + | - | + | -
