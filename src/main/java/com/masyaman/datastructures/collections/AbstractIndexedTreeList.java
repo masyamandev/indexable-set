@@ -33,6 +33,14 @@ abstract class AbstractIndexedTreeList<E> extends AbstractList<E> {
     /** Size of a List */
     protected int size = 0;
 
+    /**
+     * Methods set(obj) in ListIterator can't be implemented to satisfy specification in IndexedTreeListSet.
+     * So these methods are disabled by default and throws UnsupportedOperationException.
+     * It's possible to enable this feature but in this case exception may be thrown if someone tries to add/set
+     * an element which is already in a collection.
+     */
+    boolean supportSetInIterator = true;
+
     //-----------------------------------------------------------------------
     /**
      * Gets the element at the specified index.
@@ -68,7 +76,7 @@ abstract class AbstractIndexedTreeList<E> extends AbstractList<E> {
 
     /**
      * Gets a ListIterator over the list.
-     * WARN: ListIterator may throw IllegalArgumentException on set(obj) and add(obj) methods if collection is
+     * WARN: ListIterator may not update list on set(obj) and add(obj) methods if collection is
      * IndexedTreeListSet and obj is already in collection.
      *
      * @return the new iterator
@@ -81,7 +89,7 @@ abstract class AbstractIndexedTreeList<E> extends AbstractList<E> {
 
     /**
      * Gets a ListIterator over the list.
-     * WARN: ListIterator may throw IllegalArgumentException on set(obj) and add(obj) methods if collection is
+     * WARN: ListIterator may not update list on set(obj) and add(obj) methods if collection is
      * IndexedTreeListSet and obj is already in collection.
      *
      * @param fromIndex the index to start from
@@ -137,6 +145,37 @@ abstract class AbstractIndexedTreeList<E> extends AbstractList<E> {
             setRoot(root.insert(index, obj));
         }
         size++;
+    }
+
+    /**
+     * Inserts all of the elements in the specified collection into this
+     * list at the specified position.
+     *
+     * @param index index at which to insert the first element from the
+     *              specified collection
+     * @param collection collection containing elements to be added to this list
+     * @return <tt>true</tt> if this list changed as a result of the call
+     */
+    @Override
+    public boolean addAll(final int index, final Collection<? extends E> collection) {
+        modCount++;
+        checkInterval(index, 0, size());
+
+        int currentIndex = index;
+
+        for (E obj : collection) {
+            if (canAdd(obj)) {
+                if (root == null) {
+                    setRoot(new AVLNode(currentIndex, obj, null, null, null));
+                } else {
+                    setRoot(root.insert(currentIndex, obj));
+                }
+                size++;
+                currentIndex++;
+            }
+        }
+
+        return currentIndex > index;
     }
 
     /**
@@ -920,26 +959,27 @@ abstract class AbstractIndexedTreeList<E> extends AbstractList<E> {
         }
 
         public void set(final E obj) {
-            checkModCount();
-            if (current == null) {
-                throw new IllegalStateException();
+            if (!supportSetInIterator) {
+                throw new UnsupportedOperationException("Set operation is not supported");
             }
-            if (!canAdd(obj)) {
-                throw new IllegalArgumentException("Unable to set specified element");
+            if (canAdd(obj)) {
+                checkModCount();
+                if (current == null) {
+                    throw new IllegalStateException();
+                }
+                current.setValue(obj);
             }
-            current.setValue(obj);
         }
 
         public void add(final E obj) {
-            checkModCount();
-            if (!canAdd(obj)) {
-                throw new IllegalArgumentException("Unable to add specified element");
+            if (canAdd(obj)) {
+                checkModCount();
+                parent.add(nextIndex, obj);
+                current = null;
+                currentIndex = -1;
+                nextIndex++;
+                expectedModCount++;
             }
-            parent.add(nextIndex, obj);
-            current = null;
-            currentIndex = -1;
-            nextIndex++;
-            expectedModCount++;
         }
     }
 

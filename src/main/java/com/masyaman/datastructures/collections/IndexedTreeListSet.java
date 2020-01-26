@@ -127,6 +127,19 @@ public class IndexedTreeListSet<E> extends AbstractIndexedTreeList<E> implements
     }
 
     /**
+     * Returns an unmodifiable view of the portion of this list between the specified
+     * <tt>fromIndex</tt>, inclusive, and <tt>toIndex</tt>, exclusive.
+     *
+     * @param fromIndex low endpoint (inclusive) of the subList
+     * @param toIndex high endpoint (exclusive) of the subList
+     * @return an unmodifiable view of the specified range within this list
+     */
+    @Override
+    public List<E> subList(int fromIndex, int toIndex) {
+        return Collections.unmodifiableList(super.subList(fromIndex, toIndex));
+    }
+
+    /**
      * Searches for the presence of an object in the list.
      *
      * @param object the object to check
