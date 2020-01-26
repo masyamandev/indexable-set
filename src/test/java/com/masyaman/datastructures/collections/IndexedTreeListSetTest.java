@@ -104,7 +104,7 @@ public class IndexedTreeListSetTest {
     }
 
     @Test
-    public void exceptionOnSetNewValue() throws Exception {
+    public void removeElementOnSetExistingValue() throws Exception {
         init();
         for (int i = 0; i < iterations; i++) {
             int indexFrom = random.nextInt(elementsList.size());
